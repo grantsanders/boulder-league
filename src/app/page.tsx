@@ -9,14 +9,14 @@ export default function Home() {
             🧗‍♂️ Boulder League Rule Proposal
           </h1>
           <p className="text-gray-400 max-w-xl text-center sm:text-left">
-            Here's our current working plan for boulder league scoring. Please speak now, or forever hold your peace.
+            {"Here's our current working plan for boulder league scoring. Please speak now, or forever hold your peace"}.
           </p>
         </section>
 
         <section className="flex flex-col gap-2 text-sm/6 font-[family-name:var(--font-geist-mono)] text-left">
           <h2 className="text-base sm:text-lg font-semibold">🔹 Working Grade</h2>
           <p className="text-gray-400">
-            Your <strong>Working Grade</strong> is the highest V-grade where you've sent at least <em>half that number</em> of problems (rounded up). Example:
+            {"Your <strong>Working Grade</strong> is the highest V-grade where you've sent at least <em>half that number</em> of problems (rounded up). Example:"}
           </p>
 
           <table className="text-left text-xs sm:text-sm mt-2 border border-black/[0.08] dark:border-white/[0.12] rounded-md overflow-hidden">
@@ -90,7 +90,7 @@ export default function Home() {
           
           <ul className="list-disc list-inside text-gray-400">
             <li><strong>If you flash, you get an additional +26 bonus points</strong></li>
-            <li>We're planning on mirroring 8a scoring here - if you flash a 9, it will be worth slightly more than doing a 10, etc</li>
+            <li>{"We're planning on mirroring 8a scoring here - if you flash a 9, it will be worth slightly more than doing a 10, etc"}</li>
           </ul>
         </section>
 

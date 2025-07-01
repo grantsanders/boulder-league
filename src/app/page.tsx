@@ -9,7 +9,8 @@ export default function Home() {
             🧗‍♂️ Boulder League Rule Proposal
           </h1>
           <p className="text-gray-400 max-w-xl text-center sm:text-left">
-            {"Here's our current working plan for boulder league scoring. Please speak now, or forever hold your peace."}
+            {"Here's our current working plan for boulder league scoring."} <br/>
+            {"Please speak now, or forever hold your peace."}
           </p>
         </section>
 

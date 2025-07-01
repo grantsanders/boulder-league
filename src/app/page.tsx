@@ -9,14 +9,18 @@ export default function Home() {
             🧗‍♂️ Boulder League Rule Proposal
           </h1>
           <p className="text-gray-400 max-w-xl text-center sm:text-left">
-            {"Here's our current working plan for boulder league scoring. Please speak now, or forever hold your peace"}.
+            {"Here's our current working plan for boulder league scoring. Please speak now, or forever hold your peace."}
           </p>
         </section>
 
         <section className="flex flex-col gap-2 text-sm/6 font-[family-name:var(--font-geist-mono)] text-left">
           <h2 className="text-base sm:text-lg font-semibold">🔹 Working Grade</h2>
           <p className="text-gray-400">
-            {"Your <strong>Working Grade</strong> is the highest V-grade where you've sent at least <em>half that number</em> of problems (rounded up). Example:"}
+            {"Your "}
+            <strong>Working Grade</strong>
+            {" is the highest V-grade where you've sent at least "}
+            <em>half that number</em>
+            {" of problems (rounded up). Example:"}
           </p>
 
           <table className="text-left text-xs sm:text-sm mt-2 border border-black/[0.08] dark:border-white/[0.12] rounded-md overflow-hidden">
@@ -86,11 +90,13 @@ export default function Home() {
 
         <section className="flex flex-col gap-2 text-sm/6 font-[family-name:var(--font-geist-mono)] text-left">
           <h2 className="text-base sm:text-lg font-semibold">🔹 Flash Bonus</h2>
-          
-          
+
+
           <ul className="list-disc list-inside text-gray-400">
-            <li><strong>If you flash, you get an additional +26 bonus points</strong></li>
-            <li>{"We're planning on mirroring 8a scoring here - if you flash a 9, it will be worth slightly more than doing a 10, etc"}</li>
+            <li><strong>If you flash, you get an additional 20% point bonus</strong></li>
+            <strong>Examples:</strong>
+            <li>If your working grade is 10, and you flash a 10, you would get 120 points (base 100 + 20) rather than 100.</li> 
+            <li>If your working grade is 10 and you flash a 9, you would get 90 points (base 75 + 15) </li>
           </ul>
         </section>
 
@@ -120,14 +126,14 @@ export default function Home() {
             <li><strong>Working Grade</strong> = highest V-grade with ≥ half that number of sends (rounded up).</li>
             <li><strong>100 points</strong> for sending your Working Grade.</li>
             <li><strong>+25 / –25</strong> points for each grade above/below (to a min of 0).</li>
-            <li><strong>+25 bonus</strong> for flashing.</li>
+            <li><strong>+20% bonus</strong> for flashing.</li>
             <li><strong>Working Grade adjusts as you progress,</strong> but previous scores remain fixed.</li>
             <li><strong>No repeats</strong> / significantly overlapping boulders (point farming)</li>
           </ul>
         </section>
       </main>
 
-      
+
     </div>
   );
 }

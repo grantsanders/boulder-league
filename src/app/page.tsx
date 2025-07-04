@@ -169,7 +169,7 @@ export default function Home() {
         <section className="flex flex-col gap-2 text-sm/6 font-[family-name:var(--font-geist-mono)] text-left">
           <h2 className="text-base sm:text-lg font-semibold">✅ Point Accrual Summary</h2>
           <ul className="list-disc list-inside text-gray-400">
-            <li><strong>Working Grade</strong> = highest V-grade with ≥ half that number of sends (rounded up).</li>
+            <li><strong>Working Grade</strong> = highest V-grade with that number of sends.</li>
             <li><strong>100 points</strong> for sending your Working Grade.</li>
             <li><strong>+25 / –25</strong> points for each grade above/below (to a min of 0).</li>
             <li><strong>+20% bonus</strong> for flashing.</li>

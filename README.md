@@ -59,6 +59,31 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
    - `http://localhost:3000/auth/callback`
    - `http://localhost:3000/dashboard`
 
+### Google SSO Setup (Optional)
+
+1. **Create Google OAuth Credentials:**
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Create a new project or select an existing one
+   - Enable the Google+ API
+   - Go to "Credentials" → "Create Credentials" → "OAuth 2.0 Client IDs"
+   - Set application type to "Web application"
+   - Add authorized redirect URIs:
+     - `https://your-project.supabase.co/auth/v1/callback`
+     - `http://localhost:3000/auth/callback` (for development)
+   - Copy the **Client ID** and **Client Secret**
+
+2. **Configure Supabase Google Provider:**
+   - Go to your Supabase project dashboard
+   - Navigate to **Authentication** → **Providers**
+   - Find **Google** and click **Enable**
+   - Enter your Google **Client ID** and **Client Secret**
+   - Save the configuration
+
+3. **Test Google SSO:**
+   - Visit your app and click "Sign in with Google"
+   - Complete the Google OAuth flow
+   - You should be redirected to your dashboard
+
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
 ## Learn More

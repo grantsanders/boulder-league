@@ -22,7 +22,7 @@ export default function Home() {
         {user ? (
           <>
             <span className="text-sm text-gray-600">
-              Welcome, {user.email}
+              Welcome, {user.user_metadata?.display_name || user.email}
             </span>
             <Link
               href="/dashboard"

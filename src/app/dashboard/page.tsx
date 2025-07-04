@@ -44,7 +44,7 @@ export default function DashboardPage() {
       {/* Navigation */}
       <nav className="absolute top-4 right-4 flex items-center space-x-4">
         <span className="text-sm text-gray-600">
-          Welcome, {user?.email}
+          Welcome, {user?.user_metadata?.display_name || user?.email}
         </span>
         <button
           onClick={handleSignOut}

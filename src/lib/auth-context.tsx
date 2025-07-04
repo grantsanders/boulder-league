@@ -63,10 +63,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signInWithGoogle = async () => {
+    const redirectUrl = process.env.NODE_ENV === 'production' 
+      ? 'https://boulder-league-fork.vercel.app/auth/callback'
+      : `${window.location.origin}/auth/callback`
+    
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`
+        redirectTo: redirectUrl
       }
     })
     return { error }

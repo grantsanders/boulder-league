@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -12,6 +13,7 @@ export default function SignupPage() {
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
   const { signUp } = useAuth()
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -35,11 +37,11 @@ export default function SignupPage() {
     
     if (error) {
       setError(error.message)
+      setLoading(false)
     } else {
-      setMessage('Check your email for a confirmation link!')
+      setMessage('Check your email for a confirmation link! After confirming, you can sign in to access your dashboard.')
+      setLoading(false)
     }
-    
-    setLoading(false)
   }
 
   return (

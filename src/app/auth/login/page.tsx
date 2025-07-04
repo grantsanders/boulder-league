@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -10,6 +11,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const { signIn } = useAuth()
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -20,9 +22,11 @@ export default function LoginPage() {
     
     if (error) {
       setError(error.message)
+      setLoading(false)
+    } else {
+      // Redirect to dashboard on successful sign in
+      router.push('/dashboard')
     }
-    
-    setLoading(false)
   }
 
   return (
@@ -90,7 +94,7 @@ export default function LoginPage() {
 
           <div className="text-center mt-4">
             <p className="text-gray-400 text-sm">
-              Don't have an account?{' '}
+              {'Don\'t have an account?'}
               <Link href="/auth/signup" className="text-indigo-600 hover:text-indigo-500 font-medium">
                 Sign up here
               </Link>

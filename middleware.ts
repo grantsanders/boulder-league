@@ -35,9 +35,12 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
+  console.log('Middleware - Path:', request.nextUrl.pathname, 'User:', user ? 'authenticated' : 'not authenticated')
+
   // If there's no user and the user is trying to access a protected route,
   // redirect them to the rules page (home page)
   if (!user && request.nextUrl.pathname.startsWith('/dashboard')) {
+    console.log('Middleware - Redirecting unauthenticated user from dashboard to home')
     const redirectUrl = new URL('/', request.url)
     return NextResponse.redirect(redirectUrl)
   }

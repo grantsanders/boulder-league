@@ -63,7 +63,17 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+    <div className="relative grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      {/* Return to Dashboard Button */}
+      <div className="absolute top-4 left-4 z-10">
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-black border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+        >
+          ← Return to Dashboard
+        </Link>
+      </div>
+
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start max-w-4xl w-full">
         <section className="flex flex-col items-center gap-4 text-center text-sm/6 font-[family-name:var(--font-geist-mono)] sm:text-left sm:items-start">
           <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-center sm:text-left">

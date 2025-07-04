@@ -1,7 +1,54 @@
 
+'use client'
+
+import { useAuth } from '@/lib/auth-context'
+import Link from 'next/link'
+
 export default function Home() {
+  const { user, loading } = useAuth()
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg">Loading...</div>
+      </div>
+    )
+  }
+
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      {/* Navigation */}
+      <nav className="absolute top-4 right-4 flex items-center space-x-4">
+        {user ? (
+          <>
+            <span className="text-sm text-gray-600">
+              Welcome, {user.email}
+            </span>
+            <Link
+              href="/dashboard"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+            >
+              Dashboard
+            </Link>
+          </>
+        ) : (
+          <>
+            <Link
+              href="/auth/login"
+              className="text-indigo-600 hover:text-indigo-500 text-sm font-medium"
+            >
+              Sign In
+            </Link>
+            <Link
+              href="/auth/signup"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+            >
+              Sign Up
+            </Link>
+          </>
+        )}
+      </nav>
+
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start max-w-4xl w-full">
 
         <section className="flex flex-col items-center gap-4 text-center text-sm/6 font-[family-name:var(--font-geist-mono)] sm:text-left sm:items-start">

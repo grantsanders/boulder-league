@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -14,7 +13,6 @@ export default function SignupPage() {
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
   const { signUp, signInWithGoogle } = useAuth()
-  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

@@ -9,8 +9,8 @@ const mockPhotos = [
   { id: 'c', url: '/default3.png', votes: 1 },
 ]
 
-export default function ProfilePhotoPage({ params }: { params: { userId: string } }) {
-  const [photos, setPhotos] = useState(mockPhotos)
+export default function ProfilePhotoPage() {
+  const [photos] = useState(mockPhotos)
   const [newPhoto, setNewPhoto] = useState<File | null>(null)
 
   // Placeholder upload handler

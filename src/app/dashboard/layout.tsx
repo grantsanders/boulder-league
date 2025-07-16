@@ -47,6 +47,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <Link href="/dashboard" className="hover:underline">Dashboard</Link>
         <Link href="/dashboard/leaderboard" className="hover:underline">Leaderboard</Link>
         <Link href="/dashboard/profiles" className="hover:underline">Profiles</Link>
+        <Link href="/dashboard/nicknames" className="hover:underline">Nicknames</Link>
         {/* Add more links as needed */}
       </nav>
       <nav className="absolute top-4 right-4 flex items-center space-x-4">

@@ -41,7 +41,7 @@ export default function DashboardPage() {
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      {/* Navigation */}
+      {/* Navigation
       <nav className="absolute top-4 right-4 flex items-center space-x-4">
         <span className="text-sm text-gray-600">
           Welcome, {user?.user_metadata?.display_name || user?.email}
@@ -52,7 +52,7 @@ export default function DashboardPage() {
         >
           Sign Out
         </button>
-      </nav>
+      </nav> */}
 
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start max-w-4xl w-full">
         <section className="flex flex-col items-center gap-4 text-center text-sm/6 font-[family-name:var(--font-geist-mono)] sm:text-left sm:items-start">

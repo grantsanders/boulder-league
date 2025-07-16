@@ -49,7 +49,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <Link href="/dashboard/profiles" className="hover:underline">Profiles</Link>
         {/* Add more links as needed */}
       </nav>
-      <nav className="absolute top-4 right-4 flex items-center space-x-4">
+      <nav className="absolute top-4 right-4 flex items-center space-x-4 py-4">
         {user ? (
           <>
             <span className="text-sm text-gray-600">

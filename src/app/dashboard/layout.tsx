@@ -43,13 +43,13 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <nav className="flex items-center space-x-4 p-4 bg-gray-900 text-white">
+      <nav className="flex items-center space-x-4 p-6 bg-gray-900 text-white">
         <Link href="/dashboard" className="hover:underline">Dashboard</Link>
         <Link href="/dashboard/leaderboard" className="hover:underline">Leaderboard</Link>
         <Link href="/dashboard/profiles" className="hover:underline">Profiles</Link>
         {/* Add more links as needed */}
       </nav>
-      <nav className="absolute top-4 right-4 flex items-center space-x-4 py-4">
+      <nav className="absolute top-4 right-4 flex items-center space-x-4">
         {user ? (
           <>
             <span className="text-sm text-gray-600">

@@ -9,7 +9,7 @@ const mockNicknames = [
   { id: 'c', name: 'The Flash', votes: 1 },
 ]
 
-export default function NicknameVotePage({ }: { params: { userId: string } }) {
+export default function NicknameVotePage() {
   const [nicknames, setNicknames] = useState(mockNicknames)
   const [newNickname, setNewNickname] = useState('')
 

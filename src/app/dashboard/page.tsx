@@ -75,7 +75,7 @@ export default function DashboardPage() {
                 Start climbing to see your grade!
               </p>
             </div>
-            
+
             <div className="bg-white dark:bg-black p-6 rounded-lg border border-black/[0.08] dark:border-white/[0.12]">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
                 Total Points
@@ -85,7 +85,7 @@ export default function DashboardPage() {
                 Points earned this season
               </p>
             </div>
-            
+
             <div className="bg-white dark:bg-black p-6 rounded-lg border border-black/[0.08] dark:border-white/[0.12]">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
                 Problems Sent
@@ -96,7 +96,7 @@ export default function DashboardPage() {
               </p>
             </div>
           </div>
-          
+
           <div className="text-center mt-8">
             <Link
               href="/"
@@ -105,6 +105,8 @@ export default function DashboardPage() {
               View Rules
             </Link>
           </div>
+
+
         </section>
       </main>
     </div>

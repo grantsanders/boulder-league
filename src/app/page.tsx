@@ -115,7 +115,8 @@ export default function Home() {
                 ['Working Grade', 100],
                 ['Working Grade - 1', 75],
                 ['Working Grade - 2', 50],
-                ['Working Grade - 3 or lower', 0],
+                ['Working Grade - 3', 25],
+                ['Working Grade - 4 or lower', 0],
               ].map(([label, score]) => (
                 <tr key={label} className="odd:bg-black even:bg-black/[0.02] dark:even:bg-white/[0.03]">
                   <td className="px-3 py-1.5 border-r border-gray-200 dark:border-white/[0.06]">{label}</td>

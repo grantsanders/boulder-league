@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
 export default function DashboardPage() {
-  const { user, loading, signOut } = useAuth()
+  const { user, loading} = useAuth()
   const router = useRouter()
 
   useEffect(() => {
@@ -17,9 +17,9 @@ export default function DashboardPage() {
     }
   }, [user, loading, router])
 
-  const handleSignOut = async () => {
-    await signOut()
-  }
+  // const handleSignOut = async () => {
+  //   await signOut()
+  // }
 
   // Show loading while checking auth status
   if (loading) {

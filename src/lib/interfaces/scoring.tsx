@@ -1,10 +1,10 @@
 export interface Ascent {
     uuid: string;
-    climb_name: string;
+    name: string;
     description: string;
-    working_grade: number;
+    working_grade_when_sent: number;
     absolute_grade: number;
-    flash: boolean;
+    is_flash: boolean;
     sent_date: string;
     create_date: string;
 }

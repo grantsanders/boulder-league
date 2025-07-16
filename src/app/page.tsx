@@ -84,7 +84,7 @@ export default function Home() {
                 [6, 6], [7, 7], [8, 8], [9, 9], [10, 10],
                 [11, 11], [12, 12],
               ].map(([grade, sends]) => (
-                <tr key={grade} className="odd:bg-black even:bg-black/[0.02] dark:even:bg-white/[0.03]">
+                <tr key={grade} className="odd:bg-black/[0.02] dark:odd:bg-white/[0.08] even:bg-white dark:even:bg-white/[0.03]">
                   <td className="px-3 py-1.5 border-r border-gray-200 dark:border-white/[0.06]">V{grade}</td>
                   <td className="px-3 py-1.5">{sends}</td>
                 </tr>
@@ -118,7 +118,7 @@ export default function Home() {
                 ['Working Grade - 3', 25],
                 ['Working Grade - 4 or lower', 0],
               ].map(([label, score]) => (
-                <tr key={label} className="odd:bg-black even:bg-black/[0.02] dark:even:bg-white/[0.03]">
+                <tr key={label} className="odd:bg-black/[0.02] dark:odd:bg-white/[0.08] even:bg-white dark:even:bg-white/[0.03]">
                   <td className="px-3 py-1.5 border-r border-gray-200 dark:border-white/[0.06]">{label}</td>
                   <td className="px-3 py-1.5">{score}</td>
                 </tr>

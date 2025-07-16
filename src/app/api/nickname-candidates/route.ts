@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const user_id = searchParams.get('user_id')
 
-  let query = supabase.schema('boulder-league').from('nickname_candidates').select('*')
+  let query = supabase.schema('boulder-league-dev').from('nickname_candidates').select('*')
   if (user_id) query = query.eq('user_id', user_id)
 
   const { data, error } = await query

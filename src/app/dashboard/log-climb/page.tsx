@@ -31,8 +31,8 @@ export default function LogClimbPage() {
         
         if (data.success && data.climbers && data.climbers.length > 0) {
           const climber = data.climbers[0]
-          setUserWorkingGrade(climber.current_working_grade || 0)
-          setAbsoluteGrade((climber.current_working_grade || 0).toString())
+          setUserWorkingGrade(climber.working_grade || 0)
+          setAbsoluteGrade((climber.working_grade || 0).toString())
         } else {
           // If no climber found, default to V0
           setUserWorkingGrade(0)

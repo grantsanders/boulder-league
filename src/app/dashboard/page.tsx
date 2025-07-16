@@ -117,10 +117,10 @@ export default function DashboardPage() {
                 Working Grade
               </h3>
               <p className="text-3xl font-bold text-indigo-600">
-                V{climberData?.current_working_grade || 0}
+                V{climberData?.working_grade || 0}
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                {climberData?.current_working_grade ? 'Your current working grade' : 'Start climbing to see your grade!'}
+                {climberData?.working_grade ? 'Your current working grade' : 'Start climbing to see your grade!'}
               </p>
             </div>
 

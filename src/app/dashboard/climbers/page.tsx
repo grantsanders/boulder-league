@@ -96,7 +96,7 @@ export default function ClimbersPage() {
                     </td>
                     <td className="px-3 py-1.5 border-r border-gray-200 dark:border-white/[0.06]">
                       <div className="text-sm text-gray-900 dark:text-gray-100">
-                        V{climber.current_working_grade}
+                        V{climber.working_grade}
                       </div>
                     </td>
                     <td className="px-3 py-1.5 border-r border-gray-200 dark:border-white/[0.06]">

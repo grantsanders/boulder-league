@@ -4,7 +4,7 @@ export interface Climber {
     last_name: string;
     nickname: string; // probably end up being FK to nickname table
     running_score: number;
-    current_working_grade: number;
+    working_grade: number;
     ascents_of_next_grade: number;
 }
 

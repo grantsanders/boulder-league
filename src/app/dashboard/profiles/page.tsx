@@ -77,7 +77,7 @@ export default function ProfilesPage() {
                   </p>
                 )}
                 <div className="text-xs text-gray-500 dark:text-gray-400 mb-4 space-y-1">
-                  <div>Working Grade: V{climber.current_working_grade}</div>
+                  <div>Working Grade: V{climber.working_grade}</div>
                   <div>Score: {climber.running_score} pts</div>
                 </div>
                 <Link

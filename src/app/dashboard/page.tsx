@@ -50,7 +50,6 @@ export default function DashboardPage() {
       }
         setDataLoading(false)
       }
-    }
 
     fetchUserData()
   }, [user?.id])

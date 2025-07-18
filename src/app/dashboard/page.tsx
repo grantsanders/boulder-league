@@ -1,9 +1,9 @@
 'use client'
 
-import { useAuth } from '@/lib/auth-context'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { useAuth } from '@/lib/auth-context'
 import { Climber } from '@/lib/interfaces/user-info'
 import { Ascent } from '@/lib/interfaces/scoring'
 
@@ -16,9 +16,7 @@ export default function DashboardPage() {
   const [dataError, setDataError] = useState<string | null>(null)
 
   useEffect(() => {
-    console.log('Dashboard - Loading:', loading, 'User:', user ? 'authenticated' : 'not authenticated')
     if (!loading && !user) {
-      console.log('Dashboard - Redirecting to home page')
       router.push('/')
     }
   }, [user, loading, router])
@@ -47,7 +45,6 @@ export default function DashboardPage() {
           setAscentsData(ascentsResult.ascents || [])
         }
       } catch (err) {
-        console.error('Error fetching user data:', err)
         setDataError('Failed to load your climbing data')
       } finally {
         setDataLoading(false)
@@ -150,22 +147,22 @@ export default function DashboardPage() {
           </div>
         )}
 
-                  <div className="text-center mt-8 space-y-4">
+        <div className="text-center mt-8 space-y-4">
+          <Link
+            href="/"
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
+          >
+            View Rules
+          </Link>
+          <div className="block">
             <Link
-              href="/"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
+              href="/dashboard/log-climb"
+              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors"
             >
-              View Rules
+              🧗‍♂️ Log Climb
             </Link>
-            <div className="block">
-              <Link
-                href="/dashboard/log-climb"
-                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors"
-              >
-                🧗‍♂️ Log Climb
-              </Link>
-            </div>
           </div>
+        </div>
       </section>
     </>
   )

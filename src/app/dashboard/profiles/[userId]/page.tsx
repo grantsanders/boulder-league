@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 // Mock photos for a user
 const mockPhotos = [
@@ -36,7 +37,7 @@ export default function ProfilePhotoPage() {
       <ul className="space-y-4 mb-8">
         {photos.map(photo => (
           <li key={photo.id} className="flex items-center gap-4 bg-gray-800 rounded p-3">
-            <img src={photo.url} alt="Profile option" className="w-16 h-16 rounded-full" />
+            <Image src={photo.url} alt="Profile option" width={64} height={64} className="rounded-full" />
             <span className="font-mono">{photo.votes} votes</span>
             <button
               className="ml-auto bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded"

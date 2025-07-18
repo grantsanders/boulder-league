@@ -28,6 +28,7 @@ export default function NicknameVotePage() {
           setError(data.error || 'Failed to fetch nicknames')
         }
       } catch (err) {
+        console.error('Error fetching nicknames:', err)
         setError('Failed to fetch nicknames')
       } finally {
         setLoading(false)

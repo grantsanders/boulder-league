@@ -22,6 +22,7 @@ export default function NicknamesPage() {
           setError(data.error || 'Failed to fetch climbers')
         }
       } catch (err) {
+        console.error('Error fetching climbers:', err)
         setError('Failed to fetch climbers')
       } finally {
         setLoading(false)

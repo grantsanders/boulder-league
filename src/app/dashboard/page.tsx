@@ -44,9 +44,10 @@ export default function DashboardPage() {
         if (ascentsResult.success) {
           setAscentsData(ascentsResult.ascents || [])
         }
-      } catch (err) {
+      } catch (err: any) {
         setDataError('Failed to load your climbing data')
-      } finally {
+        console.log(err?.message)
+      }
         setDataLoading(false)
       }
     }

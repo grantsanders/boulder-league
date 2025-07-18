@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 // Mock users (replace with real data later)
 const mockUsers = [
@@ -14,7 +15,13 @@ export default function NicknamesPage() {
       <ul className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {mockUsers.map(user => (
           <li key={user.id} className="bg-gray-800 rounded-lg p-4 flex flex-col items-center">
-            <img src={user.profilePhoto} alt={user.name} className="w-16 h-16 rounded-full mb-2" />
+            <Image
+              src={user.profilePhoto}
+              alt={user.name}
+              width={64}
+              height={64}
+              className="w-16 h-16 rounded-full mb-2 object-cover"
+            />
             <span className="font-semibold">{user.name}</span>
             <Link
               href={`/dashboard/nicknames/${user.id}`}

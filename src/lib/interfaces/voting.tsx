@@ -14,7 +14,8 @@ export interface ProfilePhotoCandidate {
 }
 
 export interface NicknameCandidate {
-    uuid: string;
+    id: string; // Changed from uuid to id for consistency
+    uuid?: string; 
     user_id: string;
     nickname: string;
     submitted_by: string;

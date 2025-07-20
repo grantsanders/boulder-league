@@ -95,24 +95,24 @@ export default function LogClimbPage() {
             } as Ascent)
             
             // Calculate new running score
-            const newRunningScore = climber.running_score + newPoints
+            // const newRunningScore = climber.running_score + newPoints
             
             // Update the climber's score
-            const updateResponse = await fetch('/api/climbers', {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                climber_uuid: user?.id,
-                new_score: newRunningScore
-              }),
-            })
+            // const updateResponse = await fetch('/api/climbers', {
+            //   method: 'PUT',
+            //   headers: {
+            //     'Content-Type': 'application/json',
+            //   },
+            //   body: JSON.stringify({
+            //     climber_uuid: user?.id,
+            //     new_score: newRunningScore
+            //   }),
+            // })
             
-            const updateResult = await updateResponse.json()
-            if (!updateResult.success) {
-              console.error('Failed to update score:', updateResult.error)
-            }
+            // const updateResult = await updateResponse.json()
+            // if (!updateResult.success) {
+            //   console.error('Failed to update score:', updateResult.error)
+            // }
           }
         } catch (scoreError) {
           console.error('Error updating score:', scoreError)

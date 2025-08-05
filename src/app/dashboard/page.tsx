@@ -37,7 +37,7 @@ export default function DashboardPage() {
         console.log('🔍 Checking for pending climber creation...')
         console.log('📦 Pending data:', { pendingWorkingGrade, pendingAscentsOfNextGrade, pendingDisplayName })
         
-        if (pendingWorkingGrade && pendingDisplayName) {
+        if (pendingWorkingGrade && pendingDisplayName && pendingAscentsOfNextGrade) {
           console.log('👤 Creating climber record for new email user...')
           // Create climber record for new user
           const [firstName, ...lastNameParts] = pendingDisplayName.split(' ')
@@ -48,7 +48,7 @@ export default function DashboardPage() {
             first_name: firstName, 
             last_name: lastName, 
             working_grade: parseInt(pendingWorkingGrade),
-            ascents_of_next_grade: parseInt(pendingAscentsOfNextGrade || '0')
+            ascents_of_next_grade: parseInt(pendingAscentsOfNextGrade)
           })
           
           const climberResponse = await fetch('/api/climbers', {
@@ -61,7 +61,7 @@ export default function DashboardPage() {
               first_name: firstName,
               last_name: lastName,
               working_grade: parseInt(pendingWorkingGrade),
-              ascents_of_next_grade: parseInt(pendingAscentsOfNextGrade || '0')
+              ascents_of_next_grade: parseInt(pendingAscentsOfNextGrade)
             }),
           })
 

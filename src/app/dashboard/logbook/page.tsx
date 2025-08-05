@@ -3,14 +3,18 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import { calculatePersonalPoints } from '@/lib/utils/score-calculator'
+import { Climber } from '@/lib/interfaces/user-info'
 
-interface Ascent {
+interface AscentWithId {
   id: string
-  absolute_grade: number
-  working_grade_when_sent: number
-  is_flash: boolean
-  created_at: string
+  uuid: string
   name?: string
+  description: string
+  working_grade_when_sent: number
+  absolute_grade: number
+  is_flash: boolean
+  sent_date: string
+  create_date: string
   [key: string]: unknown
 }
 
@@ -19,32 +23,42 @@ type SortDirection = 'asc' | 'desc';
 
 export default function LogbookPage() {
   const { user, loading } = useAuth()
-  const [ascents, setAscents] = useState<Ascent[]>([])
+  const [ascents, setAscents] = useState<AscentWithId[]>([])
+  const [climber, setClimber] = useState<Climber | null>(null)
   const [dataLoading, setDataLoading] = useState(true)
   const [dataError, setDataError] = useState<string | null>(null)
   const [sortKey, setSortKey] = useState<SortKey>('created_at')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
 
   useEffect(() => {
-    const fetchAscents = async () => {
+    const fetchData = async () => {
       if (!user?.id) {
         setDataLoading(false)
         return
       }
+      
       try {
-        const res = await fetch(`/api/ascents?user_id=${user.id}`)
-        const result = await res.json()
-        if (result.success) {
-          setAscents(result.ascents || [])
+        // Fetch climber data
+        const climberRes = await fetch(`/api/climbers?uuid=${user.id}`)
+        const climberResult = await climberRes.json()
+        if (climberResult.success && climberResult.climbers?.length > 0) {
+          setClimber(climberResult.climbers[0])
+        }
+
+        // Fetch ascents
+        const ascentsRes = await fetch(`/api/ascents?user_id=${user.id}`)
+        const ascentsResult = await ascentsRes.json()
+        if (ascentsResult.success) {
+          setAscents(ascentsResult.ascents || [])
         } else {
           setDataError('Failed to load ascents')
         }
       } catch {
-        setDataError('Failed to load ascents')
+        setDataError('Failed to load data')
       }
       setDataLoading(false)
     }
-    fetchAscents()
+    fetchData()
   }, [user?.id])
 
   function handleSort(key: SortKey) {
@@ -95,7 +109,6 @@ export default function LogbookPage() {
   }
 
   const sortedAscents = getSortedAscents()
-  const climber = null; // If you have the climber object, use it here
 
   return (
     <main className="max-w-3xl mx-auto py-8 w-full">
@@ -141,12 +154,21 @@ export default function LogbookPage() {
             <tbody>
               {sortedAscents.map((ascent, idx) => (
                 <tr key={ascent.id} className={idx % 2 === 0 ? 'bg-white dark:bg-black/[0.02]' : 'bg-black/[0.02] dark:bg-white/[0.03]'}>
-                  <td className="px-3 py-1.5 border-r border-black/[0.08] dark:border-white/[0.06] text-gray-900 dark:text-gray-100 whitespace-nowrap">{new Date(ascent.sent_date as string).toLocaleDateString()}</td>
+                  <td className="px-3 py-1.5 border-r border-black/[0.08] dark:border-white/[0.06] text-gray-900 dark:text-gray-100 whitespace-nowrap">{new Date(ascent.sent_date).toLocaleDateString()}</td>
                   <td className="px-3 py-1.5 border-r border-black/[0.08] dark:border-white/[0.06] text-gray-900 dark:text-gray-100">{ascent.name || '-'}</td>
                   <td className="px-3 py-1.5 border-r border-black/[0.08] dark:border-white/[0.06] text-indigo-600 dark:text-indigo-400">V{ascent.absolute_grade}</td>
                   <td className="px-3 py-1.5 border-r border-black/[0.08] dark:border-white/[0.06] text-blue-600 dark:text-blue-400">V{ascent.working_grade_when_sent}</td>
                   <td className="px-3 py-1.5 text-yellow-700 dark:text-yellow-400 text-center font-semibold">
-                    {calculatePersonalPoints(climber as unknown, ascent as unknown)}
+                    {climber ? calculatePersonalPoints(climber, {
+                      uuid: ascent.uuid,
+                      name: ascent.name || '',
+                      description: ascent.description,
+                      working_grade_when_sent: ascent.working_grade_when_sent,
+                      absolute_grade: ascent.absolute_grade,
+                      is_flash: ascent.is_flash,
+                      sent_date: ascent.sent_date,
+                      create_date: ascent.create_date
+                    }) : '—'}
                   </td>
                   <td className="px-3 py-1.5 text-green-700 dark:text-green-400 text-center">{ascent.is_flash ? '⚡' : '-'}</td>
                   <td className="px-3 py-1.5 text-center">

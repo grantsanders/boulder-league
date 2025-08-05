@@ -128,7 +128,7 @@ export default function SignupPage() {
                 autoComplete="name"
                 required
                 className="w-full px-3 py-2 border border-black/[0.08] dark:border-white/[0.12] rounded-md bg-white dark:bg-black text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                placeholder="First name is fine, you'll get a nickname later"
+                placeholder="First and last name - you'll get a nickname later"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
               />

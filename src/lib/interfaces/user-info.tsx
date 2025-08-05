@@ -1,6 +1,5 @@
 export interface Climber {
     id: string;
-    uuid?: string; // Optional, if you want to keep it for legacy reasons
     first_name: string;
     last_name: string;
     nickname: string; // probably end up being FK to nickname table

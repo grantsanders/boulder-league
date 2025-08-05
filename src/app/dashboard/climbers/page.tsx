@@ -83,7 +83,7 @@ export default function ClimbersPage() {
               </thead>
               <tbody className="bg-white dark:bg-black divide-y divide-gray-200 dark:divide-white/[0.06]">
                 {climbers.map((climber) => (
-                  <tr key={climber.uuid} className="odd:bg-black/[0.02] dark:odd:bg-white/[0.08] even:bg-white dark:even:bg-black">
+                  <tr key={climber.id} className="odd:bg-black/[0.02] dark:odd:bg-white/[0.08] even:bg-white dark:even:bg-black">
                     <td className="px-3 py-1.5 border-r border-gray-200 dark:border-white/[0.06]">
                       <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {climber.first_name} {climber.last_name}

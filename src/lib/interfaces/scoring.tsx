@@ -1,5 +1,5 @@
 export interface Ascent {
-    uuid: string;
+    id: string;
     name: string;
     description: string;
     working_grade_when_sent: number;

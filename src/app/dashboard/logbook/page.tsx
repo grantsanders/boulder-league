@@ -39,7 +39,7 @@ export default function LogbookPage() {
       
       try {
         // Fetch climber data
-        const climberRes = await fetch(`/api/climbers?uuid=${user.id}`)
+        const climberRes = await fetch(`/api/climbers?id=${user.id}`)
         const climberResult = await climberRes.json()
         if (climberResult.success && climberResult.climbers?.length > 0) {
           setClimber(climberResult.climbers[0])
@@ -160,7 +160,7 @@ export default function LogbookPage() {
                   <td className="px-3 py-1.5 border-r border-black/[0.08] dark:border-white/[0.06] text-blue-600 dark:text-blue-400">V{ascent.working_grade_when_sent}</td>
                   <td className="px-3 py-1.5 text-yellow-700 dark:text-yellow-400 text-center font-semibold">
                     {climber ? calculatePersonalPoints(climber, {
-                      uuid: ascent.uuid,
+                      id: ascent.id,
                       name: ascent.name || '',
                       description: ascent.description,
                       working_grade_when_sent: ascent.working_grade_when_sent,

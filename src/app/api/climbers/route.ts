@@ -4,10 +4,10 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function GET(request: NextRequest) {
   const supabase = await createClient()
   const { searchParams } = new URL(request.url)
-  const uuid = searchParams.get('uuid')
+  const id = searchParams.get('id')
 
   let query = supabase.schema('boulder-league-dev').from('climbers').select('*')
-  if (uuid) query = query.eq('uuid', uuid)
+  if (id) query = query.eq('id', id)
 
   const { data, error } = await query
 
@@ -26,13 +26,13 @@ export async function POST(request: NextRequest) {
     console.log('📝 Received climber data:', body)
 
     // Validate required fields
-    const { uuid, first_name, last_name, working_grade, ascents_of_next_grade } = body
+    const { id, first_name, last_name, working_grade } = body
 
-    if (!uuid || !first_name || !last_name || working_grade === undefined) {
-      console.log('❌ Missing required fields:', { uuid, first_name, last_name, working_grade })
+    if (!id || !first_name || !last_name || working_grade === undefined) {
+      console.log('❌ Missing required fields:', { id, first_name, last_name, working_grade })
       return NextResponse.json({ 
         success: false, 
-        error: 'Missing required fields: uuid, first_name, last_name, and working_grade are required' 
+        error: 'Missing required fields: id, first_name, last_name, and working_grade are required' 
       }, { status: 400 })
     }
 
@@ -43,12 +43,12 @@ export async function POST(request: NextRequest) {
       .schema('boulder-league-dev')
       .from('climbers')
       .insert([{
-        uuid,
+        id,
         first_name,
         last_name,
         running_score: 0,
         working_grade,
-        ascents_of_next_grade
+        ascents_of_next_grade: 0
       }])
       .select()
 
@@ -72,12 +72,12 @@ export async function PUT(request: NextRequest) {
   try {
     const supabase = await createClient()
     const body = await request.json()
-    const { climber_uuid, new_score } = body
+    const { climber_id, new_score } = body
 
-    if (!climber_uuid || new_score === undefined) {
+    if (!climber_id || new_score === undefined) {
       return NextResponse.json({ 
         success: false, 
-        error: 'Missing required fields: climber_uuid and new_score are required' 
+        error: 'Missing required fields: climber_id and new_score are required' 
       }, { status: 400 })
     }
 
@@ -86,7 +86,7 @@ export async function PUT(request: NextRequest) {
       .schema('boulder-league-dev')
       .from('climbers')
       .update({ running_score: new_score })
-      .eq('id', climber_uuid)
+      .eq('id', climber_id)
       .select()
 
     if (error) {

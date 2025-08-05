@@ -11,7 +11,7 @@ import { Bars3Icon } from '@heroicons/react/24/solid'
 export default function NicknameVotePage() {
   const { user } = useAuth()
   const params = useParams<{ userId: string }>()
-  const userId = params.userId
+  const userId = params?.userId
   
 
   const [nicknames, setNicknames] = useState<NicknameCandidate[]>([])

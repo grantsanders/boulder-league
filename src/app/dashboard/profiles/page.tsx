@@ -71,9 +71,9 @@ export default function ProfilesPage() {
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
                   {climber.first_name} {climber.last_name}
                 </h3>
-                {climber.nickname && (
+                {/* {climber.nickname && ( */}
                   <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
-                    &ldquo;{climber.nickname}&rdquo;
+                    {/* &ldquo;{climber.nickname}&rdquo; */}
                   </p>
                 )}
                 <div className="text-xs text-gray-500 dark:text-gray-400 mb-4 space-y-1">

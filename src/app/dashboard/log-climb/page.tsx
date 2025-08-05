@@ -24,7 +24,7 @@ export default function LogClimbPage() {
       }
 
       try {
-        const response = await fetch(`/api/climbers?uuid=${user.id}`)
+        const response = await fetch(`/api/climbers?id=${user.id}`)
         const data = await response.json()
         
         if (data.success && data.climbers && data.climbers.length > 0) {
@@ -62,7 +62,7 @@ export default function LogClimbPage() {
         is_flash: isFlash,
         sent_date: new Date().toISOString().split('T')[0], // Today's date in YYYY-MM-DD format
         create_date: new Date().toISOString(),
-        climber_uuid: user?.id
+        climber_id: user?.id
       }
 
       const response = await fetch('/api/ascents', {
@@ -79,7 +79,7 @@ export default function LogClimbPage() {
         // Recalculate and update the climber's score
         try {
           // Fetch current climber data
-          const climberResponse = await fetch(`/api/climbers?uuid=${user?.id}`)
+          const climberResponse = await fetch(`/api/climbers?id=${user?.id}`)
           const climberData = await climberResponse.json()
           
           if (climberData.success && climberData.climbers && climberData.climbers.length > 0) {

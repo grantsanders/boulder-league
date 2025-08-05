@@ -44,7 +44,7 @@ export default function DashboardPage() {
           const lastName = lastNameParts.join(' ') || 'User'
           
           console.log('📝 Climber data:', { 
-            uuid: user.id, 
+            id: user.id, 
             first_name: firstName, 
             last_name: lastName, 
             working_grade: parseInt(pendingWorkingGrade),
@@ -57,7 +57,7 @@ export default function DashboardPage() {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              uuid: user.id,
+              id: user.id,
               first_name: firstName,
               last_name: lastName,
               working_grade: parseInt(pendingWorkingGrade),
@@ -82,7 +82,7 @@ export default function DashboardPage() {
         } else {
           console.log('🔍 No pending climber data found, checking if user exists...')
           // Check if user exists but has no climbing data (OAuth user)
-          const climberResponse = await fetch(`/api/climbers?uuid=${user.id}`)
+          const climberResponse = await fetch(`/api/climbers?id=${user.id}`)
           const climberResult = await climberResponse.json()
           
           if (climberResult.success && (!climberResult.climbers || climberResult.climbers.length === 0)) {
@@ -92,7 +92,7 @@ export default function DashboardPage() {
         }
 
         // Fetch climber data
-        const climberResponse = await fetch(`/api/climbers?uuid=${user.id}`)
+        const climberResponse = await fetch(`/api/climbers?id=${user.id}`)
         const climberResult = await climberResponse.json()
         
         if (climberResult.success && climberResult.climbers && climberResult.climbers.length > 0) {

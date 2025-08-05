@@ -64,7 +64,7 @@ export default function ProfilesPage() {
         {climbers.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {climbers.map(climber => (
-              <div key={climber.uuid} className="bg-white dark:bg-black p-6 rounded-lg border border-black/[0.08] dark:border-white/[0.12] flex flex-col items-center text-center">
+              <div key={climber.id} className="bg-white dark:bg-black p-6 rounded-lg border border-black/[0.08] dark:border-white/[0.12] flex flex-col items-center text-center">
                 <div className="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center text-2xl font-bold text-gray-600 mb-4">
                   {climber.first_name.charAt(0)}{climber.last_name.charAt(0)}
                 </div>
@@ -81,7 +81,7 @@ export default function ProfilesPage() {
                   <div>Score: {climber.running_score} pts</div>
                 </div>
                 <Link
-                  href={`/dashboard/profiles/${climber.uuid}`}
+                  href={`/dashboard/profiles/${climber.id}`}
                   className="text-indigo-600 hover:text-indigo-500 text-sm font-medium"
                 >
                   View & Vote →

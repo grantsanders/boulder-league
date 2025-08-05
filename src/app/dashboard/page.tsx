@@ -29,6 +29,68 @@ export default function DashboardPage() {
       }
 
       try {
+        // Check for pending climber creation
+        const pendingWorkingGrade = localStorage.getItem('pendingWorkingGrade')
+        const pendingAscentsOfNextGrade = localStorage.getItem('pendingAscentsOfNextGrade')
+        const pendingDisplayName = localStorage.getItem('pendingDisplayName')
+        
+        console.log('🔍 Checking for pending climber creation...')
+        console.log('📦 Pending data:', { pendingWorkingGrade, pendingAscentsOfNextGrade, pendingDisplayName })
+        
+        if (pendingWorkingGrade && pendingDisplayName) {
+          console.log('👤 Creating climber record for new email user...')
+          // Create climber record for new user
+          const [firstName, ...lastNameParts] = pendingDisplayName.split(' ')
+          const lastName = lastNameParts.join(' ') || 'User'
+          
+          console.log('📝 Climber data:', { 
+            uuid: user.id, 
+            first_name: firstName, 
+            last_name: lastName, 
+            working_grade: parseInt(pendingWorkingGrade),
+            ascents_of_next_grade: parseInt(pendingAscentsOfNextGrade || '0')
+          })
+          
+          const climberResponse = await fetch('/api/climbers', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              uuid: user.id,
+              first_name: firstName,
+              last_name: lastName,
+              working_grade: parseInt(pendingWorkingGrade),
+              ascents_of_next_grade: parseInt(pendingAscentsOfNextGrade || '0')
+            }),
+          })
+
+          const climberResult = await climberResponse.json()
+          
+          console.log('👤 Climber creation result:', climberResult)
+          
+          if (climberResult.success) {
+            console.log('✅ Climber created successfully, clearing pending data...')
+            // Clear pending data
+            localStorage.removeItem('pendingWorkingGrade')
+            localStorage.removeItem('pendingAscentsOfNextGrade')
+            localStorage.removeItem('pendingDisplayName')
+            console.log('🧹 Pending data cleared')
+          } else {
+            console.log('❌ Climber creation failed:', climberResult.error)
+          }
+        } else {
+          console.log('🔍 No pending climber data found, checking if user exists...')
+          // Check if user exists but has no climbing data (OAuth user)
+          const climberResponse = await fetch(`/api/climbers?uuid=${user.id}`)
+          const climberResult = await climberResponse.json()
+          
+          if (climberResult.success && (!climberResult.climbers || climberResult.climbers.length === 0)) {
+            // OAuth user without climbing data - they'll need to set it up later
+            console.log('🔍 OAuth user detected without climbing data')
+          }
+        }
+
         // Fetch climber data
         const climberResponse = await fetch(`/api/climbers?uuid=${user.id}`)
         const climberResult = await climberResponse.json()
@@ -44,10 +106,12 @@ export default function DashboardPage() {
         if (ascentsResult.success) {
           setAscentsData(ascentsResult.ascents || [])
         }
-      } catch {
+      } catch (err) {
+        console.error('Error fetching user data:', err)
         setDataError('Failed to load your climbing data')
+      } finally {
+        setDataLoading(false)
       }
-      setDataLoading(false)
     }
 
     fetchUserData()

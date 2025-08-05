@@ -50,7 +50,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signUp = async (email: string, password: string, displayName?: string) => {
-    const { error } = await supabase.auth.signUp({
+    console.log('🔐 Creating Supabase auth user...')
+    console.log('📧 Auth data:', { email, displayName })
+    
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -59,13 +62,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
     })
+    
+    console.log('🔐 Supabase auth result:', { 
+      success: !error, 
+      error: error?.message || 'No error',
+      userId: data?.user?.id || 'No user ID'
+    })
+    
     return { error }
   }
 
   const signInWithGoogle = async () => {
     const redirectUrl = process.env.NODE_ENV === 'production' 
-      ? 'https://boulder-league-fork.vercel.app/auth/callback'
-      : `${window.location.origin}/auth/callback`
+      ? 'https://boulder-league.vercel.app/auth/callback'
+      : 'http://localhost:3000/auth/callback'
     
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/lib/auth-context'
-import Link from 'next/link'
 import { calculatePersonalPoints } from '@/lib/utils/score-calculator'
 
 interface Ascent {
@@ -12,7 +11,7 @@ interface Ascent {
   is_flash: boolean
   created_at: string
   name?: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 type SortKey = 'absolute_grade' | 'name' | 'created_at';
@@ -40,7 +39,7 @@ export default function LogbookPage() {
         } else {
           setDataError('Failed to load ascents')
         }
-      } catch (err: any) {
+      } catch {
         setDataError('Failed to load ascents')
       }
       setDataLoading(false)
@@ -60,14 +59,14 @@ export default function LogbookPage() {
   function getSortedAscents() {
     const sorted = [...ascents]
     sorted.sort((a, b) => {
-      let aValue: any = a[sortKey]
-      let bValue: any = b[sortKey]
+      let aValue: unknown = a[sortKey]
+      let bValue: unknown = b[sortKey]
       if (sortKey === 'name') {
-        aValue = aValue?.toLowerCase() || ''
-        bValue = bValue?.toLowerCase() || ''
+        aValue = (aValue as string)?.toLowerCase() || ''
+        bValue = (bValue as string)?.toLowerCase() || ''
       }
-      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1
-      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1
+      if ((aValue as number) < (bValue as number)) return sortDirection === 'asc' ? -1 : 1
+      if ((aValue as number) > (bValue as number)) return sortDirection === 'asc' ? 1 : -1
       return 0
     })
     return sorted
@@ -142,12 +141,12 @@ export default function LogbookPage() {
             <tbody>
               {sortedAscents.map((ascent, idx) => (
                 <tr key={ascent.id} className={idx % 2 === 0 ? 'bg-white dark:bg-black/[0.02]' : 'bg-black/[0.02] dark:bg-white/[0.03]'}>
-                  <td className="px-3 py-1.5 border-r border-black/[0.08] dark:border-white/[0.06] text-gray-900 dark:text-gray-100 whitespace-nowrap">{new Date(ascent.sent_date).toLocaleDateString()}</td>
+                  <td className="px-3 py-1.5 border-r border-black/[0.08] dark:border-white/[0.06] text-gray-900 dark:text-gray-100 whitespace-nowrap">{new Date(ascent.sent_date as string).toLocaleDateString()}</td>
                   <td className="px-3 py-1.5 border-r border-black/[0.08] dark:border-white/[0.06] text-gray-900 dark:text-gray-100">{ascent.name || '-'}</td>
                   <td className="px-3 py-1.5 border-r border-black/[0.08] dark:border-white/[0.06] text-indigo-600 dark:text-indigo-400">V{ascent.absolute_grade}</td>
                   <td className="px-3 py-1.5 border-r border-black/[0.08] dark:border-white/[0.06] text-blue-600 dark:text-blue-400">V{ascent.working_grade_when_sent}</td>
                   <td className="px-3 py-1.5 text-yellow-700 dark:text-yellow-400 text-center font-semibold">
-                    {calculatePersonalPoints(climber as any, ascent as any)}
+                    {calculatePersonalPoints(climber as unknown, ascent as unknown)}
                   </td>
                   <td className="px-3 py-1.5 text-green-700 dark:text-green-400 text-center">{ascent.is_flash ? '⚡' : '-'}</td>
                   <td className="px-3 py-1.5 text-center">

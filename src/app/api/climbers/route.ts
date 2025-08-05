@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
   const uuid = searchParams.get('uuid')
 
   let query = supabase.schema('boulder-league-dev').from('climbers').select('*')
-  if (uuid) query = query.eq('id', uuid)
+  if (uuid) query = query.eq('uuid', uuid)
 
   const { data, error } = await query
 
@@ -15,6 +15,58 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 })
   }
   return NextResponse.json({ success: true, climbers: data })
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    console.log('🏔️ Creating climber record via API...')
+    const supabase = await createClient()
+    const body = await request.json()
+
+    console.log('📝 Received climber data:', body)
+
+    // Validate required fields
+    const { uuid, first_name, last_name, working_grade } = body
+
+    if (!uuid || !first_name || !last_name || working_grade === undefined) {
+      console.log('❌ Missing required fields:', { uuid, first_name, last_name, working_grade })
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Missing required fields: uuid, first_name, last_name, and working_grade are required' 
+      }, { status: 400 })
+    }
+
+    console.log('✅ Validation passed, inserting climber into database...')
+
+    // Create the climber record
+    const { data, error } = await supabase
+      .schema('boulder-league-dev')
+      .from('climbers')
+      .insert([{
+        uuid,
+        first_name,
+        last_name,
+        nickname: '', // Will be populated later
+        running_score: 0,
+        working_grade,
+        ascents_of_next_grade: 0
+      }])
+      .select()
+
+    if (error) {
+      console.error('❌ Database error inserting climber:', error)
+      return NextResponse.json({ success: false, error: error.message }, { status: 500 })
+    }
+
+    console.log('✅ Climber created successfully:', data[0])
+    return NextResponse.json({ success: true, climber: data[0] })
+  } catch (error) {
+    console.error('❌ Unexpected error in POST /api/climbers:', error)
+    return NextResponse.json({ 
+      success: false, 
+      error: 'Internal server error' 
+    }, { status: 500 })
+  }
 }
 
 export async function PUT(request: NextRequest) {

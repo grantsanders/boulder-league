@@ -3,8 +3,6 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
-import { calculatePersonalPoints } from '@/lib/utils/score-calculator'
-import { Ascent } from '@/lib/interfaces/scoring'
 
 export default function LogClimbPage() {
   const { user } = useAuth()
@@ -86,33 +84,8 @@ export default function LogClimbPage() {
           
           if (climberData.success && climberData.climbers && climberData.climbers.length > 0) {
             const climber = climberData.climbers[0]
+            console.log(climber)
             
-            // Calculate new points from this ascent
-            const newPoints = calculatePersonalPoints(climber, {
-              absolute_grade: parseInt(absoluteGrade),
-              working_grade_when_sent: userWorkingGrade,
-              is_flash: isFlash
-            } as Ascent)
-            
-            // Calculate new running score
-            // const newRunningScore = climber.running_score + newPoints
-            
-            // Update the climber's score
-            // const updateResponse = await fetch('/api/climbers', {
-            //   method: 'PUT',
-            //   headers: {
-            //     'Content-Type': 'application/json',
-            //   },
-            //   body: JSON.stringify({
-            //     climber_uuid: user?.id,
-            //     new_score: newRunningScore
-            //   }),
-            // })
-            
-            // const updateResult = await updateResponse.json()
-            // if (!updateResult.success) {
-            //   console.error('Failed to update score:', updateResult.error)
-            // }
           }
         } catch (scoreError) {
           console.error('Error updating score:', scoreError)

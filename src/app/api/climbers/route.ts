@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
       .schema('boulder-league-dev')
       .from('climbers')
       .insert([{
-        id: uuid,
+        uuid,
         first_name,
         last_name,
         running_score: 0,

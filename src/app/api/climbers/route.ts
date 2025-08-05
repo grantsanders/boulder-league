@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     console.log('📝 Received climber data:', body)
 
     // Validate required fields
-    const { uuid, first_name, last_name, working_grade } = body
+    const { uuid, first_name, last_name, working_grade, ascents_of_next_grade } = body
 
     if (!uuid || !first_name || !last_name || working_grade === undefined) {
       console.log('❌ Missing required fields:', { uuid, first_name, last_name, working_grade })
@@ -46,10 +46,9 @@ export async function POST(request: NextRequest) {
         uuid,
         first_name,
         last_name,
-        nickname: '', // Will be populated later
         running_score: 0,
         working_grade,
-        ascents_of_next_grade: 0
+        ascents_of_next_grade
       }])
       .select()
 

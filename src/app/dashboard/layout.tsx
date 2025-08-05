@@ -43,6 +43,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <Link href="/dashboard/leaderboard" className="text-indigo-600 hover:text-indigo-500 text-sm font-medium">Leaderboard</Link>
         <Link href="/dashboard/climbers" className="text-indigo-600 hover:text-indigo-500 text-sm font-medium">Climbers</Link>
         <Link href="/dashboard/profiles" className="text-indigo-600 hover:text-indigo-500 text-sm font-medium">Profiles</Link>
+        <Link href="/dashboard/nicknames" className="text-indigo-600 hover:text-indigo-500 text-sm font-medium">Nicknames</Link>
       </div>
       {/* Top Right Welcome/Sign Out */}
       <nav className="absolute top-4 right-8 flex items-center space-x-4 z-10">

@@ -7,6 +7,8 @@ import Link from 'next/link'
 export default function SignupPage() {
   const [email, setEmail] = useState('')
   const [displayName, setDisplayName] = useState('')
+  const [workingGrade, setWorkingGrade] = useState('')
+  const [ascentsOfNextGrade, setAscentsOfNextGrade] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -19,6 +21,9 @@ export default function SignupPage() {
     setLoading(true)
     setError(null)
     setMessage(null)
+
+    console.log('🚀 Starting email account creation process...')
+    console.log('📝 Form data:', { email, displayName: displayName.trim(), workingGrade, ascentsOfNextGrade })
 
     if (password !== confirmPassword) {
       setError('Passwords do not match')
@@ -38,12 +43,38 @@ export default function SignupPage() {
       return
     }
 
+    if (!workingGrade) {
+      setError('Working grade is required')
+      setLoading(false)
+      return
+    }
+
+    if (!ascentsOfNextGrade) {
+      setError('Number of ascents of next grade is required')
+      setLoading(false)
+      return
+    }
+
+    console.log('✅ Form validation passed, calling signUp...')
     const { error } = await signUp(email, password, displayName.trim())
     
+    console.log('📧 SignUp result:', { error: error?.message || 'No error' })
+    
+    if (!error) {
+      console.log('💾 Storing pending data in localStorage...')
+      // Store working grade and ascents for later climber creation
+      localStorage.setItem('pendingWorkingGrade', workingGrade)
+      localStorage.setItem('pendingAscentsOfNextGrade', ascentsOfNextGrade)
+      localStorage.setItem('pendingDisplayName', displayName.trim())
+      console.log('✅ Pending data stored:', { workingGrade, ascentsOfNextGrade, displayName: displayName.trim() })
+    }
+    
     if (error) {
+      console.log('❌ SignUp failed:', error.message)
       setError(error.message)
       setLoading(false)
     } else {
+      console.log('✅ SignUp successful, showing confirmation message')
       setMessage('Check your email for a confirmation link! After confirming, you can sign in to access your dashboard.')
       setLoading(false)
     }
@@ -88,7 +119,7 @@ export default function SignupPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="displayName" className="block text-sm font-medium text-gray-700 mb-1">
-                Display Name
+                Name
               </label>
               <input
                 id="displayName"
@@ -97,10 +128,65 @@ export default function SignupPage() {
                 autoComplete="name"
                 required
                 className="w-full px-3 py-2 border border-black/[0.08] dark:border-white/[0.12] rounded-md bg-white dark:bg-black text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                placeholder="Enter your display name"
+                placeholder="First name is fine, you'll get a nickname later"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
               />
+            </div>
+
+            <div>
+              <label htmlFor="workingGrade" className="block text-sm font-medium text-gray-700 mb-1">
+                Working Grade
+              </label>
+              <select
+                id="workingGrade"
+                name="workingGrade"
+                required
+                className="w-full px-3 py-2 border border-black/[0.08] dark:border-white/[0.12] rounded-md bg-white dark:bg-black text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                value={workingGrade}
+                onChange={(e) => setWorkingGrade(e.target.value)}
+              >
+                <option value="">Select your working grade</option>
+                {Array.from({ length: 17 }, (_, i) => i).map((grade) => (
+                  <option key={grade} value={grade}>
+                    V{grade}
+                  </option>
+                ))}
+              </select>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Your working grade is the highest V-grade where you&apos;ve sent at least that number of problems. 
+                <br/>e.g. if you&apos;ve sent 3 V3s, your working grade is V3.
+              </p>
+            </div>
+
+            <div>
+              <label htmlFor="ascentsOfNextGrade" className="block text-sm font-medium text-gray-700 mb-1">
+                Ascents of Next Grade
+              </label>
+              <input
+                id="ascentsOfNextGrade"
+                name="ascentsOfNextGrade"
+                type="number"
+                min="0"
+                max="20"
+                required
+                className="w-full px-3 py-2 border border-black/[0.08] dark:border-white/[0.12] rounded-md bg-white dark:bg-black text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                placeholder="0"
+                value={ascentsOfNextGrade}
+                onChange={(e) => setAscentsOfNextGrade(e.target.value)}
+              />
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                {workingGrade ? (
+                  <>
+                    How many climbs of the next grade (V{parseInt(workingGrade) + 1}) have you already sent?
+                  </>
+                ) : (
+                  <>
+                    How many climbs of the next grade have you already sent?
+                    <br/>Select your working grade above first.
+                  </>
+                )}
+              </p>
             </div>
 
             <div>

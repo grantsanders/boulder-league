@@ -46,7 +46,6 @@ export async function POST(request: NextRequest) {
         id,
         first_name,
         last_name,
-        nickname: '', // Will be populated later
         running_score: 0,
         working_grade,
         ascents_of_next_grade: 0

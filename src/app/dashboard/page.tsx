@@ -48,7 +48,7 @@ export default function DashboardPage() {
             first_name: firstName, 
             last_name: lastName, 
             working_grade: parseInt(pendingWorkingGrade),
-            ascents_of_next_grade: parseFloat(pendingAscentsOfNextGrade)
+            ascents_of_next_grade: parseInt(pendingAscentsOfNextGrade)
           })
           
           const climberResponse = await fetch('/api/climbers', {
@@ -61,7 +61,7 @@ export default function DashboardPage() {
               first_name: firstName,
               last_name: lastName,
               working_grade: parseInt(pendingWorkingGrade),
-              ascents_of_next_grade: parseFloat(pendingAscentsOfNextGrade)
+              ascents_of_next_grade: parseInt(pendingAscentsOfNextGrade)
             }),
           })
 

@@ -26,13 +26,13 @@ export async function POST(request: NextRequest) {
     console.log('📝 Received climber data:', body)
 
     // Validate required fields
-    const { id, first_name, last_name, working_grade } = body
+    const { id, first_name, last_name, working_grade, ascents_of_next_grade } = body
 
-    if (!id || !first_name || !last_name || working_grade === undefined) {
-      console.log('❌ Missing required fields:', { id, first_name, last_name, working_grade })
+    if (!id || !first_name || !last_name || !ascents_of_next_grade || working_grade === undefined) {
+      console.log('❌ Missing required fields:', { id, first_name, last_name, ascents_of_next_grade, working_grade })
       return NextResponse.json({ 
         success: false, 
-        error: 'Missing required fields: id, first_name, last_name, and working_grade are required' 
+        error: 'Missing required fields: id, first_name, last_name, ascents_of_next_grade, and working_grade are required' 
       }, { status: 400 })
     }
 
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
         last_name,
         running_score: 0,
         working_grade,
-        ascents_of_next_grade: 0
+        ascents_of_next_grade 
       }])
       .select()
 

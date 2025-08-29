@@ -102,4 +102,43 @@ export async function PUT(request: NextRequest) {
       error: 'Internal server error' 
     }, { status: 500 })
   }
-} 
+}
+
+export async function PATCH(request: NextRequest) {
+  try {
+    const supabase = await createClient()
+    const body = await request.json()
+    const { id, ascents_of_next_grade, promotion_input_needed } = body
+
+    if (!id || ascents_of_next_grade === undefined || promotion_input_needed === undefined) {
+      return NextResponse.json({
+        success: false,
+        error: 'Missing required fields: id, ascents_of_next_grade, and promotion_input_needed are required'
+      }, { status: 400 })
+    }
+
+    // Update the climber's ascents_of_next_grade and promotion_input_needed
+    const { data, error } = await supabase
+      .schema('boulder-league-dev')
+      .from('climbers')
+      .update({
+        ascents_of_next_grade: ascents_of_next_grade,
+        promotion_input_needed: promotion_input_needed
+      })
+      .eq('id', id)
+      .select()
+
+    if (error) {
+      console.error('Error updating climber promotion data:', error)
+      return NextResponse.json({ success: false, error: error.message }, { status: 500 })
+    }
+
+    return NextResponse.json({ success: true, climber: data[0] })
+  } catch (error) {
+    console.error('Error in PATCH /api/climbers:', error)
+    return NextResponse.json({
+      success: false,
+      error: 'Internal server error'
+    }, { status: 500 })
+  }
+}

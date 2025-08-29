@@ -1,12 +1,20 @@
 import { useState, useRef } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import { useAuth } from '@/lib/auth-context'
+import { ProfilePhotoCandidate } from '@/lib/interfaces/voting'
+
+// Type for API response
+interface ApiResponse {
+  success: boolean
+  candidates?: ProfilePhotoCandidate
+  error?: string
+}
 
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
 
 async function uploadProfilePhoto(file: File, userId: string, submittedBy: string) {
   const filePath = `${userId}/${Date.now()}_${file.name}`
-  const { data, error } = await supabase.storage
+  const { error } = await supabase.storage
     .from('profile-photos')
     .upload(filePath, file)
 
@@ -29,7 +37,7 @@ async function uploadProfilePhoto(file: File, userId: string, submittedBy: strin
     })
   })
 
-  const dbResult = await response.json()
+  const dbResult: ApiResponse = await response.json()
   if (!dbResult.success) {
     throw new Error(dbResult.error || 'Failed to save to database')
   }
@@ -46,7 +54,7 @@ export default function ProfilePhotoIUpload({
   userId: string; 
   submittedBy?: string;
   disabled?: boolean;
-  onUploadSuccess?: (candidate: any) => void;
+  onUploadSuccess?: (candidate: ProfilePhotoCandidate) => void;
 }) {
   const { user } = useAuth()
   const [uploadError, setUploadError] = useState<string | null>(null)
@@ -66,10 +74,13 @@ export default function ProfilePhotoIUpload({
     
     try {
       const result = await uploadProfilePhoto(file, userId, currentSubmittedBy)
-      onUploadSuccess?.(result.candidate)
-    } catch (err: any) {
+      if (result.candidate) {
+        onUploadSuccess?.(result.candidate)
+      }
+    } catch (err: unknown) {
       console.error('Upload error:', err)
-      setUploadError(err.message || 'Upload failed')
+      const errorMessage = err instanceof Error ? err.message : 'Upload failed'
+      setUploadError(errorMessage)
     } finally {
       setUploading(false)
     }

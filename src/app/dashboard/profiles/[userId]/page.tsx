@@ -75,6 +75,7 @@ export default function ProfilePhotoPage() {
       }
     } catch (err) {
       setError('Failed to save ranking')
+      console.error('Error saving ranking:', err)
     } finally {
       setSaving(false)
     }

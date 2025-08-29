@@ -15,4 +15,27 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 })
   }
   return NextResponse.json({ success: true, candidates: data })
-} 
+}
+
+export async function POST(req: Request) {
+  const body = await req.json()
+  const { user_id, image_url, submitted_by } = body
+  const supabase = await createClient()
+
+  if (!user_id || !image_url || !submitted_by) {
+    return NextResponse.json({ success: false, error: 'Missing required fields' }, { status: 400 })
+  }
+
+  const { data, error } = await supabase
+    .schema('boulder-league-dev')
+    .from('profile_photo_candidates')
+    .insert([{ user_id, image_url, submitted_by }])
+    .select()
+    .single()
+
+  if (error) {
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 })
+  }
+
+  return NextResponse.json({ success: true, candidates: data })
+}

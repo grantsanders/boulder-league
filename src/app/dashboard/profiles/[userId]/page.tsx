@@ -21,26 +21,46 @@ export default function ProfilePhotoPage() {
   const [success, setSuccess] = useState<string | null>(null)
 
   useEffect(() => {
-    const fetchPhotos = async () => {
+    const fetchPhotosAndRanking = async () => {
       try {
-        console.log('Fetching photos for userId:', userId)
-        console.log('Current auth user ID:', user?.id)
-        const response = await fetch(`/api/profile-photo-candidates?user_id=${userId}`)
-        const data = await response.json()
-        if (data.success) {
-          setPhotos(data.candidates)
-        } else {
-          setError(data.error || 'Failed to fetch profile photos')
+        // Fetch photo candidates
+        const response = await fetch(`/api/profile-photo-candidates?user_id=${userId}`);
+  const data = await response.json();
+  const candidates = data.success ? data.candidates : [];
+
+        // Fetch the current user's last vote for this user
+        let rankedPhotos = candidates;
+        if (user?.id && candidates.length > 0) {
+          const voteRes = await fetch(`/api/votes?voter_id=${user.id}`);
+          const voteData = await voteRes.json();
+          if (voteData.success && Array.isArray(voteData.votes)) {
+            // Define types for votes and candidates
+            type Vote = { table_type: string; table_id: string; ranks: number };
+            type Candidate = { id: string };
+            const userVotes = (voteData.votes as Vote[]).filter((v: Vote) => v.table_type === 'profile_photo' && (candidates as Candidate[]).some((c: Candidate) => c.id === v.table_id));
+            if (userVotes.length > 0) {
+              // Sort by rank
+              const idToRank: Record<string, number> = {};
+              userVotes.forEach((v: Vote) => { idToRank[v.table_id] = v.ranks; });
+              rankedPhotos = [...candidates].sort((a: Candidate, b: Candidate) => {
+                const rankA = idToRank[a.id] ?? 999;
+                const rankB = idToRank[b.id] ?? 999;
+                return rankA - rankB;
+              });
+            }
+          }
         }
+        setPhotos(rankedPhotos);
+        if (!data.success) setError(data.error || 'Failed to fetch profile photos');
       } catch (err) {
-        console.error('Fetch error:', err)
-        setError('Failed to fetch profile photos')
+        console.error('Fetch error:', err);
+        setError('Failed to fetch profile photos');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
-    fetchPhotos()
-  }, [userId, user?.id])
+    };
+    fetchPhotosAndRanking();
+  }, [userId, user?.id]);
 
   // Drag-and-drop handler
   const onDragEnd = (result: DropResult) => {

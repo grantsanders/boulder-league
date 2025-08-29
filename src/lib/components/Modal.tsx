@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
 interface ModalProps {
@@ -7,17 +7,8 @@ interface ModalProps {
   children: ReactNode;
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, children }) => {
   if (!isOpen) return null;
-
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
-  // Check for dark mode preference
-  const isDarkMode = typeof window !== 'undefined' && document.documentElement.classList.contains('dark');
 
   return createPortal(
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-[rgba(0,0,0,0.3)] backdrop-blur-sm">

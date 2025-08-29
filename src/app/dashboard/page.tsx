@@ -146,7 +146,7 @@ export default function DashboardPage() {
   return (
     <>
       <Modal isOpen={isPromotionModalOpen} onClose={() => setIsPromotionModalOpen(false)}>
-        <h2 className="text-lg font-semibold mb-4">You've been promoted!</h2>
+        <h2 className="text-lg font-semibold mb-4">{'You\'ve been promoted!'}</h2>
         <p className="mb-4">
           As of your last tick, you are officially a V{climberData!.working_grade} climber. <br/> <br/>
           congrats big dawg. <br/> <br/>

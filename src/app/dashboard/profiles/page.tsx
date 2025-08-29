@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import { Climber } from '@/lib/interfaces/user-info'
+import { useAuth } from '@/lib/auth-context'
 import Link from 'next/link'
 
 export default function ProfilesPage() {
+  const { user } = useAuth()
   const [climbers, setClimbers] = useState<Climber[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -47,6 +49,9 @@ export default function ProfilesPage() {
     )
   }
 
+  // Filter out the current user
+  const filteredClimbers = climbers.filter(climber => climber.id !== user?.id)
+
   return (
     <>
       <section className="flex flex-col items-center gap-4 text-center text-sm/6 font-[family-name:var(--font-geist-mono)] sm:text-left sm:items-start">
@@ -54,16 +59,16 @@ export default function ProfilesPage() {
           👤 Climber Profiles
         </h1>
         <p className="text-gray-400 max-w-xl text-center sm:text-left">
-          View and vote on climber profiles, nicknames, and photos.
+          View and vote on climber profile photos.
         </p>
       </section>
 
       <section className="flex flex-col gap-2 text-sm/6 font-[family-name:var(--font-geist-mono)] text-left w-full">
         <h2 className="text-base sm:text-lg font-semibold">🎯 Choose a Profile to Vote/Upload</h2>
         
-        {climbers.length > 0 ? (
+        {filteredClimbers.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {climbers.map(climber => (
+            {filteredClimbers.map(climber => (
               <div key={climber.id} className="bg-white dark:bg-black p-6 rounded-lg border border-black/[0.08] dark:border-white/[0.12] flex flex-col items-center text-center">
                 <div className="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center text-2xl font-bold text-gray-600 mb-4">
                   {climber.first_name.charAt(0)}{climber.last_name.charAt(0)}
@@ -96,7 +101,7 @@ export default function ProfilesPage() {
         )}
 
         <p className="text-xs text-gray-500 mt-4">
-          Total climbers: {climbers.length}
+          Total climbers: {filteredClimbers.length}
         </p>
       </section>
 

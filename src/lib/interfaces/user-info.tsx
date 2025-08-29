@@ -6,6 +6,7 @@ export interface Climber {
     running_score: number;
     working_grade: number;
     ascents_of_next_grade: number;
+    promotion_input_needed: boolean; // Field indicates if promotion input is needed
 }
 
 export interface Nickname {
@@ -18,4 +19,3 @@ export interface Nickname {
 export interface Identity {
     id: string;
 }
-

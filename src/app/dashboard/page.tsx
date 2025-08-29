@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import { Climber } from '@/lib/interfaces/user-info'
 import { Ascent } from '@/lib/interfaces/scoring'
+import Modal from '@/lib/components/Modal'
 
 export default function DashboardPage() {
   const { user, loading } = useAuth()
@@ -14,6 +15,8 @@ export default function DashboardPage() {
   const [ascentsData, setAscentsData] = useState<Ascent[]>([])
   const [dataLoading, setDataLoading] = useState(true)
   const [dataError, setDataError] = useState<string | null>(null)
+  const [isPromotionModalOpen, setIsPromotionModalOpen] = useState(false)
+  const [nextGradeAscents, setNextGradeAscents] = useState<string>('')
 
   useEffect(() => {
     if (!loading && !user) {
@@ -21,6 +24,15 @@ export default function DashboardPage() {
     }
   }, [user, loading, router])
 
+  useEffect(() => {
+    if (climberData) {
+      if (climberData.promotion_input_needed) {
+        console.log(climberData)
+        setIsPromotionModalOpen(true);
+      }
+    }
+  }, [climberData])
+  
   useEffect(() => {
     const fetchUserData = async () => {
       if (!user?.id) {
@@ -33,24 +45,24 @@ export default function DashboardPage() {
         const pendingWorkingGrade = localStorage.getItem('pendingWorkingGrade')
         const pendingAscentsOfNextGrade = localStorage.getItem('pendingAscentsOfNextGrade')
         const pendingDisplayName = localStorage.getItem('pendingDisplayName')
-        
+
         console.log('🔍 Checking for pending climber creation...')
         console.log('📦 Pending data:', { pendingWorkingGrade, pendingAscentsOfNextGrade, pendingDisplayName })
-        
+
         if (pendingWorkingGrade && pendingDisplayName && pendingAscentsOfNextGrade) {
           console.log('👤 Creating climber record for new email user...')
           // Create climber record for new user
           const [firstName, ...lastNameParts] = pendingDisplayName.split(' ')
           const lastName = lastNameParts.join(' ') || 'User'
-          
-          console.log('📝 Climber data:', { 
-            id: user.id, 
-            first_name: firstName, 
-            last_name: lastName, 
+
+          console.log('📝 Climber data:', {
+            id: user.id,
+            first_name: firstName,
+            last_name: lastName,
             working_grade: parseInt(pendingWorkingGrade),
             ascents_of_next_grade: parseInt(pendingAscentsOfNextGrade)
           })
-          
+
           const climberResponse = await fetch('/api/climbers', {
             method: 'POST',
             headers: {
@@ -64,11 +76,11 @@ export default function DashboardPage() {
               ascents_of_next_grade: parseInt(pendingAscentsOfNextGrade)
             }),
           })
-
+          
           const climberResult = await climberResponse.json()
-          
+
           console.log('👤 Climber creation result:', climberResult)
-          
+            
           if (climberResult.success) {
             console.log('✅ Climber created successfully, clearing pending data...')
             // Clear pending data
@@ -84,7 +96,7 @@ export default function DashboardPage() {
           // Check if user exists but has no climbing data (OAuth user)
           const climberResponse = await fetch(`/api/climbers?id=${user.id}`)
           const climberResult = await climberResponse.json()
-          
+
           if (climberResult.success && (!climberResult.climbers || climberResult.climbers.length === 0)) {
             // OAuth user without climbing data - they'll need to set it up later
             console.log('🔍 OAuth user detected without climbing data')
@@ -94,7 +106,7 @@ export default function DashboardPage() {
         // Fetch climber data
         const climberResponse = await fetch(`/api/climbers?id=${user.id}`)
         const climberResult = await climberResponse.json()
-        
+
         if (climberResult.success && climberResult.climbers && climberResult.climbers.length > 0) {
           setClimberData(climberResult.climbers[0])
         }
@@ -102,7 +114,7 @@ export default function DashboardPage() {
         // Fetch user's ascents
         const ascentsResponse = await fetch(`/api/ascents?user_id=${user.id}`)
         const ascentsResult = await ascentsResponse.json()
-        
+
         if (ascentsResult.success) {
           setAscentsData(ascentsResult.ascents || [])
         }
@@ -133,6 +145,84 @@ export default function DashboardPage() {
 
   return (
     <>
+      <Modal isOpen={isPromotionModalOpen} onClose={() => setIsPromotionModalOpen(false)}>
+        <h2 className="text-lg font-semibold mb-4">{'You\'ve been promoted!'}</h2>
+        <p className="mb-4">
+          As of your last tick, you are officially a V{climberData!.working_grade} climber. <br/> <br/>
+          congrats big dawg. <br/> <br/>
+          How many boulders of the next grade (V{(climberData!.working_grade + 1)}) had you sent BEFORE September 22?
+        </p>
+        <div className="flex flex-col space-y-2">
+          <input
+            type="number"
+            min={0}
+            max={climberData!.working_grade + 1}
+            className={`w-full p-2 border-2 border-color:gray rounded ${
+              nextGradeAscents !== '' &&
+              (isNaN(parseInt(nextGradeAscents)) ||
+                parseInt(nextGradeAscents) < 0 ||
+                parseInt(nextGradeAscents) > climberData!.working_grade + 1)
+                ? 'border-red-500'
+                : 'border-gray-300'
+            }`}
+            placeholder="Number of ascents"
+            value={nextGradeAscents}
+            onChange={(e) => setNextGradeAscents(e.target.value)}
+          />
+          {(nextGradeAscents !== '' && (parseInt(nextGradeAscents) < 0 || parseInt(nextGradeAscents) > climberData!.working_grade + 1)) && (
+            <p className="text-sm text-red-500 mt-1">
+              Must be between 0 and {climberData!.working_grade + 1}
+            </p>
+          )}
+          <div className="flex justify-end">
+            <button
+              disabled={
+                nextGradeAscents === '' ||
+                isNaN(parseInt(nextGradeAscents)) ||
+                parseInt(nextGradeAscents) < 0 ||
+                parseInt(nextGradeAscents) > climberData!.working_grade + 1
+              }
+              onClick={async () => {
+                if (user?.id && climberData) {
+                  const response = await fetch('/api/climbers', {
+                    method: 'PATCH',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      id: user.id,
+                      ascents_of_next_grade: parseInt(nextGradeAscents),
+                      promotion_input_needed: false
+                    }),
+                  });
+
+                  const result = await response.json();
+                  if (result.success) {
+                    // Update local state
+                    setClimberData({
+                      ...climberData,
+                      ascents_of_next_grade: parseInt(nextGradeAscents),
+                      promotion_input_needed: false
+                    });
+                  }
+                }
+                setIsPromotionModalOpen(false);
+              }}
+              className={`bg-blue-500 text-white px-4 py-2 rounded ${
+                (nextGradeAscents === '' ||
+                isNaN(parseInt(nextGradeAscents)) ||
+                parseInt(nextGradeAscents) < 0 ||
+                parseInt(nextGradeAscents) > climberData!.working_grade + 1)
+                  ? 'opacity-50 cursor-not-allowed'
+                  : ''
+              }`}
+            >
+              Submit
+            </button>
+          </div>
+        </div>
+      </Modal>
+
       <section className="flex flex-col items-center gap-4 text-center text-sm/6 font-[family-name:var(--font-geist-mono)] sm:text-left sm:items-start">
         <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-center sm:text-left">
           🧗‍♂️ Boulder League Dashboard
@@ -146,8 +236,8 @@ export default function DashboardPage() {
         {dataError ? (
           <div className="text-center py-8">
             <div className="text-red-600 mb-4">{dataError}</div>
-            <button 
-              onClick={() => window.location.reload()} 
+            <button
+              onClick={() => window.location.reload()}
               className="text-indigo-600 hover:text-indigo-500 text-sm font-medium"
             >
               Try Again
@@ -220,4 +310,4 @@ export default function DashboardPage() {
       </section>
     </>
   )
-} 
+}

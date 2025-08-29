@@ -98,7 +98,7 @@ export default function SignupPage() {
       {/* Return to Rules Button */}
       <div className="absolute top-4 left-4 z-10">
         <Link
-          href="/rules"
+          href="/"
           className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-black border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
         >
           ← Return to Rules

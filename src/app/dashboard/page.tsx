@@ -368,7 +368,7 @@ export default function DashboardPage() {
           <Separator className="my-6 md:my-8" />
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 mb-6 md:mb-8">
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 mb-6 md:mb-8 justify-center">
             <Button asChild variant="outline" className="h-10 md:h-9">
               <Link href="/">View Rules</Link>
             </Button>

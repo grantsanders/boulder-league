@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Climber } from '@/lib/interfaces/user-info'
+import { useAuth } from '@/lib/auth-context'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -14,6 +15,7 @@ import ImageModal from '@/components/ui/image-modal'
 import { formatNameWithNickname } from '@/lib/utils/name-formatter'
 
 export default function ProfilesPage() {
+  const { user } = useAuth()
   const [climbers, setClimbers] = useState<Climber[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -41,11 +43,13 @@ export default function ProfilesPage() {
     fetchClimbers()
   }, [])
 
-  const filteredClimbers = climbers.filter(climber =>
-    climber.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    climber.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (climber.nickname && climber.nickname.toLowerCase().includes(searchTerm.toLowerCase()))
-  )
+  const filteredClimbers = climbers
+    .filter(climber => climber.id !== user?.id) // Exclude current user
+    .filter(climber =>
+      climber.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      climber.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (climber.nickname && climber.nickname.toLowerCase().includes(searchTerm.toLowerCase()))
+    )
 
   const handleImageClick = (imageUrl: string, climber: Climber) => {
     const title = climber.nickname 

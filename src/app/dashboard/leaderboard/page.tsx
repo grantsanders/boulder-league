@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Climber } from '@/lib/interfaces/user-info'
+import { Ascent } from '@/lib/interfaces/scoring'
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -13,7 +14,7 @@ import Image from 'next/image'
 
 export default function LeaderboardPage() {
   const [climbers, setClimbers] = useState<Climber[]>([])
-  const [userAscents, setUserAscents] = useState<Record<string, any[]>>({})
+  const [userAscents, setUserAscents] = useState<Record<string, Ascent[]>>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -29,7 +30,7 @@ export default function LeaderboardPage() {
           setClimbers(sortedClimbers)
           
           // Fetch ascents for each climber
-          const ascentsData: Record<string, any[]> = {}
+          const ascentsData: Record<string, Ascent[]> = {}
           for (const climber of sortedClimbers) {
             try {
               const ascentsResponse = await fetch(`/api/ascents?userId=${climber.id}`)

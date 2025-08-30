@@ -1,5 +1,5 @@
 import { createPortal } from 'react-dom';
-import { ReactNode } from 'react';
+import React, { ReactNode, useEffect, useCallback } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 
 interface ModalProps {
@@ -9,6 +9,23 @@ interface ModalProps {
 }
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
+  // Handle escape key
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      onClose();
+    }
+  }, [onClose]);
+
+  // Add event listener for escape key
+  useEffect(() => {
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [isOpen, handleKeyDown]);
+
   if (!isOpen) return null;
 
   return createPortal(

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -11,6 +12,7 @@ import { Separator } from '@/components/ui/separator'
 
 export default function LogClimbPage() {
   const { user } = useAuth()
+  const router = useRouter()
   const [climbName, setClimbName] = useState('')
   const [absoluteGrade, setAbsoluteGrade] = useState('')
   const [isFlash, setIsFlash] = useState(false)
@@ -81,20 +83,25 @@ export default function LogClimbPage() {
       const result = await response.json()
 
       if (result.success) {
-        // Recalculate and update the climber's score
+        // Check if working grade has been updated and promotion input is needed
         try {
-          // Fetch current climber data
+          // Fetch current climber data from database
           const climberResponse = await fetch(`/api/climbers?id=${user?.id}`)
           const climberData = await climberResponse.json()
           
           if (climberData.success && climberData.climbers && climberData.climbers.length > 0) {
             const climber = climberData.climbers[0]
-            console.log(climber)
             
+            // Check if promotion input is needed
+            if (climber.promotion_input_needed) {
+              // Redirect to dashboard where the promotion modal will be shown
+              router.push('/dashboard')
+              return
+            }
           }
-        } catch (scoreError) {
-          console.error('Error updating score:', scoreError)
-          // Don't fail the climb logging if score update fails
+        } catch (error) {
+          console.error('Error checking climber data:', error)
+          // Don't fail the climb logging if this check fails
         }
         
         setSuccess(true)

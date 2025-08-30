@@ -6,7 +6,12 @@ import { useParams } from 'next/navigation'
 import { NicknameCandidate } from '@/lib/interfaces/voting'
 import { useAuth } from '@/lib/auth-context'
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
-import { Bars3Icon } from '@heroicons/react/24/solid'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { ArrowLeft, GripVertical, X, Tag, Plus } from 'lucide-react'
 
 export default function NicknameVotePage() {
   const { user } = useAuth()
@@ -139,88 +144,151 @@ export default function NicknameVotePage() {
   // Count how many suggestions the current user has made
   const userSuggestions = nicknames.filter(n => n.submitted_by === user?.id);
 
-  if (loading) return <div className="text-center py-8">Loading...</div>
-  if (error) return <div className="text-center text-red-600 py-8">{error}</div>
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-lg">Loading...</div>
+      </div>
+    )
+  }
 
+  if (error) {
+    return (
+      <Alert variant="destructive">
+        <AlertDescription>{error}</AlertDescription>
+      </Alert>
+    )
+  }
 
   return (
-    <main className="max-w-xl mx-auto py-8">
-      <Link href="/dashboard/nicknames" className="text-indigo-600 dark:text-indigo-400 hover:underline mb-4 block">
-        ← Back to Nicknames
-      </Link>
-      <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Rank & Suggest Nicknames</h1>
+    <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mb-8">
+        <Button asChild variant="ghost" className="mb-4">
+          <Link href="/dashboard/nicknames">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Nicknames
+          </Link>
+        </Button>
+        <h1 className="text-4xl font-bold tracking-tight text-foreground">
+          Rank & Suggest Nicknames
+        </h1>
+      </div>
+
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="nicknames">
           {(provided) => (
-            <ul
-              className="space-y-4 mb-8"
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-            >
-              {nicknames.map((nickname, idx) => (
-                <Draggable key={nickname.id} draggableId={String(nickname.id)} index={idx}>
-                  {(provided, snapshot) => (
-                    <li
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      className={`flex items-center gap-4 rounded p-3 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 ${
-                        snapshot.isDragging ? 'ring-2 ring-indigo-400' : ''
-                      }`}
-                    >
-                      <span className="font-semibold text-gray-800 dark:text-gray-100">
-                        {nickname.nickname}
-                      </span>
-                      {nickname.submitted_by === user?.id && (
-                      <button
-                          className="ml-2 text-red-500 hover:text-red-700 cursor-pointer"
-                          onClick={() => handleDelete(nickname.id)}
-                          title="Delete suggestion"
-                      >
-                          ✕
-                      </button>
+            <Card className="mb-8">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Tag className="h-5 w-5" />
+                  Nickname Rankings
+                </CardTitle>
+                <CardDescription>
+                  Drag and drop to reorder your preferred nicknames
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul
+                  className="space-y-4"
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                >
+                  {nicknames.map((nickname, idx) => (
+                    <Draggable key={nickname.id} draggableId={String(nickname.id)} index={idx}>
+                      {(provided, snapshot) => (
+                        <li
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          className={`flex items-center gap-4 rounded-lg p-4 bg-card border transition-all ${
+                            snapshot.isDragging ? 'ring-2 ring-primary shadow-lg' : 'hover:shadow-md'
+                          }`}
+                        >
+                          <span {...provided.dragHandleProps} className="cursor-grab hover:cursor-grabbing">
+                            <GripVertical className="w-4 h-4 text-muted-foreground" />
+                          </span>
+                          <span className="font-semibold text-foreground">
+                            {nickname.nickname}
+                          </span>
+                          {nickname.submitted_by === user?.id && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDelete(nickname.id)}
+                              className="text-destructive hover:text-destructive"
+                              title="Delete suggestion"
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          )}
+                          <span className="ml-auto">
+                            <Badge variant="secondary">
+                              Rank: {idx + 1}
+                            </Badge>
+                          </span>
+                        </li>
                       )}
-                      <span className="ml-auto text-xs text-gray-500 dark:text-gray-400">
-                        Rank: {idx + 1}
-                      </span>
-                      <span {...provided.dragHandleProps} className="cursor-grab mr-2">
-                        <Bars3Icon className="w-5 h-5 text-gray-400 dark:text-gray-500" />
-                      </span>
-                    </li>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </ul>
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </ul>
+              </CardContent>
+            </Card>
           )}
         </Droppable>
       </DragDropContext>
-      <button
-        className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded mb-4"
-        onClick={handleSaveRanking}
-        disabled={saving}
-      >
-        {saving ? 'Saving...' : 'Save Ranking'}
-      </button>
-      {success && <div className="text-green-600 mb-4">{success}</div>}
-      <div className="rounded p-4 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-700">
-        <h2 className="font-semibold mb-2 text-gray-900 dark:text-white">Suggest a New Nickname</h2>
-        <input
-        type="text"
-        value={newNickname}
-        onChange={e => setNewNickname(e.target.value)}
-        className="mb-2 px-2 py-1 rounded w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600"
-        placeholder={userSuggestions.length >= 2 ? "Limit reached (2 suggestions)" : "Enter nickname"}
-        disabled={userSuggestions.length >= 2}
-        />
-        <button
-        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
-        onClick={handleSuggest}
-        disabled={!newNickname.trim() || userSuggestions.length >= 2}
+
+      <div className="space-y-4">
+        <Button
+          onClick={handleSaveRanking}
+          disabled={saving}
+          className="w-full sm:w-auto"
         >
-          Suggest
-        </button>
+          {saving ? 'Saving...' : 'Save Ranking'}
+        </Button>
+
+        {success && (
+          <Alert>
+            <AlertDescription>{success}</AlertDescription>
+          </Alert>
+        )}
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Plus className="h-5 w-5" />
+              Suggest a New Nickname
+            </CardTitle>
+            <CardDescription>
+              Add a new nickname suggestion for this climber
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex gap-2">
+              <Input
+                type="text"
+                value={newNickname}
+                onChange={e => setNewNickname(e.target.value)}
+                placeholder={userSuggestions.length >= 2 ? "Limit reached (2 suggestions)" : "Enter nickname"}
+                disabled={userSuggestions.length >= 2}
+                className="flex-1"
+              />
+              <Button
+                onClick={handleSuggest}
+                disabled={!newNickname.trim() || userSuggestions.length >= 2}
+              >
+                Suggest
+              </Button>
+            </div>
+            {userSuggestions.length >= 2 && (
+              <Alert variant="destructive">
+                <AlertDescription>
+                  You can only suggest 2 nicknames at a time. Delete one to suggest another.
+                </AlertDescription>
+              </Alert>
+            )}
+          </CardContent>
+        </Card>
       </div>
-    </main>
+    </div>
   )
 }

@@ -9,6 +9,7 @@ import { Ascent } from '@/lib/interfaces/scoring'
 
 interface AscentWithClimber extends Ascent {
   climber_id: string;
+  climber?: Climber;
 }
 import Modal from '@/lib/components/Modal'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -16,6 +17,8 @@ import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
+import Image from 'next/image'
+import ImageModal from '@/components/ui/image-modal'
 
 export default function DashboardPage() {
   const { user, loading } = useAuth()
@@ -28,12 +31,15 @@ export default function DashboardPage() {
   const [nextGradeAscents, setNextGradeAscents] = useState<string>('')
   const [allAscents, setAllAscents] = useState<AscentWithClimber[]>([])
   const [climbers, setClimbers] = useState<Climber[]>([])
-  const [descriptionModal, setDescriptionModal] = useState<{isOpen: boolean, description: string, climberName: string, climbName: string}>({
+  const [descriptionModal, setDescriptionModal] = useState<{isOpen: boolean, description: string, climberName: string, climbName: string, absoluteGrade: number}>({
     isOpen: false,
     description: '',
     climberName: '',
-    climbName: ''
+    climbName: '',
+    absoluteGrade: 0
   })
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false)
+  const [selectedImage, setSelectedImage] = useState<{url: string, alt: string, title: string} | null>(null)
 
   // Compute recent ascents (latest by sent_date) for table
   const recentAscents = allAscents.slice().sort((a, b) => new Date(b.sent_date).getTime() - new Date(a.sent_date).getTime()).slice(0, 10)
@@ -126,7 +132,7 @@ export default function DashboardPage() {
         }
 
         // Fetch all ascents
-        const ascentsResponse = await fetch('/api/ascents')
+        const ascentsResponse = await fetch('/api/ascents/all')
         const ascentsResult = await ascentsResponse.json()
 
         if (ascentsResult.success) {
@@ -177,14 +183,24 @@ export default function DashboardPage() {
     return climber.nickname ? `${climber.first_name} "${climber.nickname}" ${climber.last_name}` : `${climber.first_name} ${climber.last_name}`
   }
 
-  const openDescriptionModal = (description: string, climberName: string, climbName: string) => {
+  const openDescriptionModal = (description: string, climberName: string, climbName: string, absoluteGrade: number) => {
     setDescriptionModal({
       isOpen: true,
       description,
       climberName,
-      climbName
+      climbName,
+      absoluteGrade
     })
   }
+
+  const handleImageClick = (url: string, climber: Climber) => {
+    setSelectedImage({
+      url,
+      alt: `${climber.first_name} ${climber.last_name}`,
+      title: `${climber.first_name} "${climber.nickname}" ${climber.last_name}`
+    });
+    setIsImageModalOpen(true);
+  };
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -262,10 +278,20 @@ export default function DashboardPage() {
       </Modal>
 
       <Modal isOpen={descriptionModal.isOpen} onClose={() => setDescriptionModal({...descriptionModal, isOpen: false})}>
-        <h2 className="text-lg font-semibold mb-4">{descriptionModal.climbName}</h2>
+        <h2 className="text-lg font-semibold mb-4">
+          {descriptionModal.climbName} <span className="font-bold">(V{descriptionModal.absoluteGrade})</span>
+        </h2>
         <p className="text-sm text-muted-foreground mb-4">by {descriptionModal.climberName}</p>
         <p className="mb-4">{descriptionModal.description || 'No description provided.'}</p>
       </Modal>
+
+      <ImageModal
+        isOpen={isImageModalOpen}
+        onClose={() => setIsImageModalOpen(false)}
+        imageUrl={selectedImage?.url || ''}
+        alt={selectedImage?.alt || ''}
+        title={selectedImage?.title || ''}
+      />
 
       {/* Header Section - Anchored to top left */}
       <div className="mb-8">
@@ -294,121 +320,227 @@ export default function DashboardPage() {
       ) : (
         <>
           {/* User Info Cards - Anchored below header */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <Card className="p-4">
-              <CardContent className="p-0 text-center">
-                <div className="text-sm font-medium text-muted-foreground mb-2">Working Grade</div>
-                <div className="text-2xl font-bold text-primary">V{climberData?.working_grade || 0}</div>
-              </CardContent>
-            </Card>
-
-            <Card className="p-4">
-              <CardContent className="p-0 text-center">
-                <div className="text-sm font-medium text-muted-foreground mb-2">Total Points</div>
-                <div className="text-2xl font-bold text-blue-600">{climberData?.running_score || 0}</div>
-              </CardContent>
-            </Card>
-
-            <Card className="p-4">
-              <CardContent className="p-0 text-center">
-                <div className="text-sm font-medium text-muted-foreground mb-2">Problems Sent</div>
-                <div className="text-2xl font-bold text-purple-600">{ascentsData.length}</div>
-              </CardContent>
-            </Card>
-
-            <Card className="p-4">
-              <CardContent className="p-0 text-center">
-                <div className="text-sm font-medium text-muted-foreground mb-2">
-                  Ascents of Next Grade (V{climberData?.working_grade ? climberData.working_grade + 1 : 1})
+          <div className="grid grid-cols-4 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4 mb-6 md:mb-8">
+            <Card className="p-2 md:p-4">
+              <CardContent className="p-0 text-center flex items-center justify-center h-full">
+                <div>
+                  <div className="text-xs md:text-sm font-medium text-muted-foreground mb-1 md:mb-2">Working Grade</div>
+                  <div className="text-sm md:text-2xl font-bold text-primary">V{climberData?.working_grade || 0}</div>
                 </div>
-                <div className="text-2xl font-bold text-pink-600">
-                  {climberData?.working_grade ? 
-                    (climberData.working_grade + 1) -
-                    (climberData.ascents_of_next_grade +
-                      ascentsData?.filter(x => x.absolute_grade == (climberData.working_grade + 1)).length) : 0}
+              </CardContent>
+            </Card>
+
+            <Card className="p-2 md:p-4">
+              <CardContent className="p-0 text-center flex items-center justify-center h-full">
+                <div>
+                  <div className="text-xs md:text-sm font-medium text-muted-foreground mb-1 md:mb-2">Total Points</div>
+                  <div className="text-sm md:text-2xl font-bold text-blue-600">{climberData?.running_score || 0}</div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="p-2 md:p-4">
+              <CardContent className="p-0 text-center flex items-center justify-center h-full">
+                <div>
+                  <div className="text-xs md:text-sm font-medium text-muted-foreground mb-1 md:mb-2">Problems Sent</div>
+                  <div className="text-sm md:text-2xl font-bold text-purple-600">{ascentsData.length}</div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="p-2 md:p-4">
+              <CardContent className="p-0 text-center flex items-center justify-center h-full">
+                <div>
+                  <div className="text-xs md:text-sm font-medium text-muted-foreground mb-1 md:mb-2">
+                    V{climberData?.working_grade ? climberData.working_grade + 1 : 1} Sends
+                  </div>
+                  <div className="text-sm md:text-2xl font-bold text-pink-600">
+                    {climberData?.working_grade ? 
+                      (climberData.working_grade + 1) -
+                      (climberData.ascents_of_next_grade +
+                        ascentsData?.filter(x => x.absolute_grade == (climberData.working_grade + 1)).length) : 0}
+                  </div>
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          <Separator className="my-8" />
+          <Separator className="my-6 md:my-8" />
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-8">
-            <Button asChild variant="outline">
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 mb-6 md:mb-8">
+            <Button asChild variant="outline" className="h-10 md:h-9">
               <Link href="/">View Rules</Link>
             </Button>
-            <Button asChild variant="outline" className="text-blue-600 dark:text-blue-400">
+            <Button asChild variant="outline" className="text-blue-600 dark:text-blue-400 h-10 md:h-9">
               <Link href="/dashboard/log-climb">Log Climb</Link>
             </Button>
-            <Button asChild variant="outline" className="text-purple-600 dark:text-purple-400">
+            <Button asChild variant="outline" className="text-purple-600 dark:text-purple-400 h-10 md:h-9">
               <Link href="/dashboard/logbook">Logbook</Link>
             </Button>
           </div>
 
-          {/* Recent Ascents Table */}
+          {/* Recent Ascents Table - Mobile Responsive */}
           <Card>
-            <CardHeader>
-              <CardTitle>Recent Ascents</CardTitle>
-              <CardDescription>Latest climbing achievements from all climbers</CardDescription>
+            <CardHeader className="pb-4 md:pb-6">
+              <CardTitle className="text-lg md:text-xl">Recent Ascents</CardTitle>
+              <CardDescription className="text-sm">Latest climbing achievements from all climbers</CardDescription>
             </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Climber</TableHead>
-                    <TableHead>Problem</TableHead>
-                    <TableHead>Grade Sent</TableHead>
-                    <TableHead>Absolute Grade</TableHead>
-                    <TableHead>Flash?</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Description</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {recentAscents.map((ascent) => (
-                    <TableRow key={ascent.id}>
-                      <TableCell className="font-medium">
-                        {getClimberName(ascent.climber_id)}
-                      </TableCell>
-                      <TableCell className="font-medium">{ascent.name}</TableCell>
-                      <TableCell>
-                        <Badge variant="secondary">V{ascent.working_grade_when_sent}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">V{ascent.absolute_grade}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={ascent.is_flash ? "default" : "secondary"}>
-                          {ascent.is_flash ? 'Yes' : 'No'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {new Date(ascent.sent_date).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>
-                        {ascent.description && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => openDescriptionModal(ascent.description, getClimberName(ascent.climber_id), ascent.name || 'Unknown Problem')}
-                            className="text-blue-600 hover:text-blue-700"
-                          >
-                            View
-                          </Button>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                  {recentAscents.length === 0 && (
+            <CardContent className="p-0 md:p-6">
+              {/* Desktop Table */}
+              <div className="hidden md:block">
+                <Table>
+                  <TableHeader>
                     <TableRow>
-                      <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
-                        No ascents logged yet. Start climbing to see achievements here!
-                      </TableCell>
+                      <TableHead className="w-12"></TableHead>
+                      <TableHead>Climber</TableHead>
+                      <TableHead>Problem</TableHead>
+                      <TableHead>Grade Sent</TableHead>
+                      <TableHead>Absolute Grade</TableHead>
+                      <TableHead>Flash?</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Description</TableHead>
                     </TableRow>
-                  )}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {recentAscents.map((ascent) => (
+                      <TableRow key={ascent.id}>
+                        <TableCell className="w-12">
+                          {ascent.climber?.profile_photo_url ? (
+                            <button
+                              onClick={() => ascent.climber && handleImageClick(ascent.climber.profile_photo_url!, ascent.climber)}
+                              className="hover:opacity-80 transition-opacity cursor-pointer"
+                            >
+                              <Image
+                                src={ascent.climber.profile_photo_url}
+                                alt={`${ascent.climber.first_name} ${ascent.climber.last_name}`}
+                                width={32}
+                                height={32}
+                                className="w-8 h-8 rounded-full object-cover"
+                              />
+                            </button>
+                          ) : (
+                            <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-medium">
+                              {ascent.climber ? `${ascent.climber.first_name.charAt(0)}${ascent.climber.last_name.charAt(0)}` : 'U'}
+                            </div>
+                          )}
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {getClimberName(ascent.climber_id)}
+                        </TableCell>
+                        <TableCell className="font-medium">{ascent.name}</TableCell>
+                        <TableCell>
+                          <Badge variant="secondary">V{ascent.working_grade_when_sent}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">V{ascent.absolute_grade}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={ascent.is_flash ? "default" : "secondary"}>
+                            {ascent.is_flash ? 'Yes' : 'No'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {new Date(ascent.sent_date).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell>
+                          {ascent.description && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => openDescriptionModal(ascent.description, getClimberName(ascent.climber_id), ascent.name || 'Unknown Problem', ascent.absolute_grade)}
+                              className="text-blue-600 hover:text-blue-700"
+                            >
+                              View
+                            </Button>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    {recentAscents.length === 0 && (
+                      <TableRow>
+                        <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+                          No ascents logged yet. Start climbing to see achievements here!
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Mobile Card Layout */}
+              <div className="md:hidden space-y-2 p-3">
+                {recentAscents.map((ascent) => (
+                  <Card key={ascent.id} className="p-3">
+                    <div className="flex items-center gap-2">
+                      {/* Profile Photo */}
+                      <div className="flex-shrink-0">
+                        {ascent.climber?.profile_photo_url ? (
+                          <button
+                            onClick={() => ascent.climber && handleImageClick(ascent.climber.profile_photo_url!, ascent.climber)}
+                            className="hover:opacity-80 transition-opacity cursor-pointer"
+                          >
+                            <Image
+                              src={ascent.climber.profile_photo_url}
+                              alt={`${ascent.climber.first_name} ${ascent.climber.last_name}`}
+                              width={32}
+                              height={32}
+                              className="w-8 h-8 rounded-full object-cover"
+                            />
+                          </button>
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-medium">
+                            {ascent.climber ? `${ascent.climber.first_name.charAt(0)}${ascent.climber.last_name.charAt(0)}` : 'U'}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Content - Compact Layout */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center mb-2">
+                          <h3 className="font-semibold text-sm truncate">
+                            {getClimberName(ascent.climber_id)}
+                          </h3>
+                        </div>
+                        
+                        <div className="flex items-center gap-2 mb-1">
+                          <p className="text-sm font-medium text-foreground truncate">
+                            {ascent.name} -
+                          </p>
+                          <Badge variant="default" className="text-xs px-1 py-0">V{ascent.absolute_grade}</Badge>
+                          {ascent.is_flash && (
+                            <Badge variant="default" className="text-xs px-1 py-0">
+                              Flash
+                            </Badge>
+                          )}
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-muted-foreground">
+                            {new Date(ascent.sent_date).toLocaleDateString()} at{' '}
+                            <Badge variant="secondary" className="text-xs px-1 py-0">V{ascent.working_grade_when_sent}</Badge>
+                          </span>
+                          {ascent.description && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => openDescriptionModal(ascent.description, getClimberName(ascent.climber_id), ascent.name || 'Unknown Problem', ascent.absolute_grade)}
+                              className="text-blue-600 hover:text-blue-700 text-xs h-6 px-2"
+                            >
+                              Details
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+                {recentAscents.length === 0 && (
+                  <div className="text-center text-muted-foreground py-6">
+                    No ascents logged yet. Start climbing to see achievements here!
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
         </>

@@ -122,11 +122,11 @@ export default function LogbookPage() {
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold tracking-tight text-foreground">
+      <div className="mb-6 md:mb-8">
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
           📝 Logbook
         </h1>
-        <p className="text-muted-foreground mt-2">
+        <p className="text-muted-foreground mt-2 text-sm md:text-base">
           Track all your climbing achievements and manage your ascents.
         </p>
       </div>
@@ -145,70 +145,151 @@ export default function LogbookPage() {
         </Card>
       ) : (
         <Card>
-          <CardHeader>
-            <CardTitle>Your Ascents</CardTitle>
-            <CardDescription>
+          <CardHeader className="pb-4 md:pb-6">
+            <CardTitle className="text-lg md:text-xl">Your Ascents</CardTitle>
+            <CardDescription className="text-sm">
               {ascents.length} total ascents logged
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead 
-                      className="cursor-pointer select-none"
-                      onClick={() => handleSort('created_at')}
-                    >
-                      <div className="flex items-center space-x-1">
-                        <span>Date</span>
-                        {sortKey === 'created_at' && (
-                          sortDirection === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
-                        )}
+          <CardContent className="p-0 md:p-6">
+            {/* Desktop Table */}
+            <div className="hidden md:block">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead 
+                        className="cursor-pointer select-none"
+                        onClick={() => handleSort('created_at')}
+                      >
+                        <div className="flex items-center space-x-1">
+                          <span>Date</span>
+                          {sortKey === 'created_at' && (
+                            sortDirection === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+                          )}
+                        </div>
+                      </TableHead>
+                      <TableHead 
+                        className="cursor-pointer select-none"
+                        onClick={() => handleSort('name')}
+                      >
+                        <div className="flex items-center space-x-1">
+                          <span>Problem</span>
+                          {sortKey === 'name' && (
+                            sortDirection === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+                          )}
+                        </div>
+                      </TableHead>
+                      <TableHead>Description</TableHead>
+                      <TableHead 
+                        className="cursor-pointer select-none"
+                        onClick={() => handleSort('absolute_grade')}
+                      >
+                        <div className="flex items-center space-x-1">
+                          <span>Grade</span>
+                          {sortKey === 'absolute_grade' && (
+                            sortDirection === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+                          )}
+                        </div>
+                      </TableHead>
+                      <TableHead>Working Grade When Sent</TableHead>
+                      <TableHead>Points</TableHead>
+                      <TableHead>Flash?</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {sortedAscents.map((ascent) => (
+                      <TableRow key={ascent.id}>
+                        <TableCell className="font-medium">
+                          {new Date(ascent.sent_date).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell>{ascent.name || '-'}</TableCell>
+                        <TableCell className="max-w-xs">
+                          <div className="truncate" title={ascent.description}>
+                            {ascent.description || '-'}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">V{ascent.absolute_grade}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="secondary">V{ascent.working_grade_when_sent}</Badge>
+                        </TableCell>
+                        <TableCell className="font-semibold">
+                          {climber ? calculatePersonalPoints(climber, {
+                            id: ascent.id,
+                            name: ascent.name || '',
+                            description: ascent.description,
+                            working_grade_when_sent: ascent.working_grade_when_sent,
+                            absolute_grade: ascent.absolute_grade,
+                            is_flash: ascent.is_flash,
+                            sent_date: ascent.sent_date,
+                            create_date: ascent.create_date
+                          }) : '—'}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={ascent.is_flash ? "default" : "secondary"}>
+                            {ascent.is_flash ? 'Yes' : 'No'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleRemove(ascent.id)}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+
+            {/* Mobile Card Layout */}
+            <div className="md:hidden space-y-2 p-3">
+              {sortedAscents.map((ascent) => (
+                <Card key={ascent.id} className="p-3">
+                  <div className="space-y-2">
+                    {/* First row: Problem name with absolute grade, flash, and delete button */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-semibold text-sm truncate">
+                          {ascent.name || 'Unnamed Problem'}
+                        </h3>
+                        <Badge variant="outline" className="text-xs px-1 py-0">V{ascent.absolute_grade}</Badge>
+                        <Badge variant={ascent.is_flash ? "default" : "secondary"} className="text-xs px-1 py-0">
+                          {ascent.is_flash ? 'Flash' : 'No'}
+                        </Badge>
                       </div>
-                    </TableHead>
-                    <TableHead 
-                      className="cursor-pointer select-none"
-                      onClick={() => handleSort('name')}
-                    >
-                      <div className="flex items-center space-x-1">
-                        <span>Problem</span>
-                        {sortKey === 'name' && (
-                          sortDirection === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
-                        )}
-                      </div>
-                    </TableHead>
-                    <TableHead 
-                      className="cursor-pointer select-none"
-                      onClick={() => handleSort('absolute_grade')}
-                    >
-                      <div className="flex items-center space-x-1">
-                        <span>Grade</span>
-                        {sortKey === 'absolute_grade' && (
-                          sortDirection === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
-                        )}
-                      </div>
-                    </TableHead>
-                    <TableHead>Working Grade When Sent</TableHead>
-                    <TableHead>Points</TableHead>
-                    <TableHead>Flash?</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {sortedAscents.map((ascent) => (
-                    <TableRow key={ascent.id}>
-                      <TableCell className="font-medium">
-                        {new Date(ascent.sent_date).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>{ascent.name || '-'}</TableCell>
-                      <TableCell>
-                        <Badge variant="outline">V{ascent.absolute_grade}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="secondary">V{ascent.working_grade_when_sent}</Badge>
-                      </TableCell>
-                      <TableCell className="font-semibold">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleRemove(ascent.id)}
+                        className="text-destructive hover:text-destructive h-6 w-6 p-0 flex-shrink-0"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </div>
+                    
+                    {/* Second row: Description */}
+                    {ascent.description && (
+                      <p className="text-xs text-muted-foreground line-clamp-2">
+                        {ascent.description}
+                      </p>
+                    )}
+                    
+                    {/* Third row: Date, working grade, and points */}
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span>
+                        logged {new Date(ascent.sent_date).toLocaleDateString()} at{' '}
+                        <Badge variant="secondary" className="text-xs px-1 py-0">V{ascent.working_grade_when_sent}</Badge>
+                      </span>
+                      <span className="font-semibold text-foreground">
                         {climber ? calculatePersonalPoints(climber, {
                           id: ascent.id,
                           name: ascent.name || '',
@@ -218,27 +299,12 @@ export default function LogbookPage() {
                           is_flash: ascent.is_flash,
                           sent_date: ascent.sent_date,
                           create_date: ascent.create_date
-                        }) : '—'}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={ascent.is_flash ? "default" : "secondary"}>
-                          {ascent.is_flash ? 'Yes' : 'No'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleRemove(ascent.id)}
-                          className="text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                        }) : '—'} pts
+                      </span>
+                    </div>
+                  </div>
+                </Card>
+              ))}
             </div>
           </CardContent>
         </Card>

@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { ArrowLeft, GripVertical, X, Upload } from 'lucide-react'
+import ImageModal from '@/components/ui/image-modal'
 
 export default function ProfilePhotoPage() {
   const { user } = useAuth()
@@ -24,14 +25,16 @@ export default function ProfilePhotoPage() {
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [success, setSuccess] = useState<string | null>(null)
+  const [selectedImage, setSelectedImage] = useState<{ url: string; alt: string; title: string } | null>(null)
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false)
 
   useEffect(() => {
     const fetchPhotosAndRanking = async () => {
       try {
-        // Fetch photo candidates
-        const response = await fetch(`/api/profile-photo-candidates?user_id=${userId}`);
-  const data = await response.json();
-  const candidates = data.success ? data.candidates : [];
+        // Fetch profile photo candidates
+        const response = await fetch(`/api/profile-photo-candidates?user_id=${userId}`)
+        const data = await response.json()
+        const candidates = data.success ? data.candidates : [];
 
         // Fetch the current user's last vote for this user
         let rankedPhotos = candidates;
@@ -56,10 +59,10 @@ export default function ProfilePhotoPage() {
           }
         }
         setPhotos(rankedPhotos);
-        if (!data.success) setError(data.error || 'Failed to fetch profile photos');
+        if (!data.success) setError(data.error || 'Failed to fetch photos');
       } catch (err) {
-        console.error('Fetch error:', err);
-        setError('Failed to fetch profile photos');
+        console.error('Error fetching photos:', err);
+        setError('Failed to fetch photos');
       } finally {
         setLoading(false);
       }
@@ -75,6 +78,18 @@ export default function ProfilePhotoPage() {
     items.splice(result.destination.index, 0, reordered)
     setPhotos(items)
   }
+
+  const handleDelete = async (photoId: string) => {
+    const response = await fetch(`/api/profile-photo-candidates/${photoId}`, {
+      method: 'DELETE',
+    });
+    const data = await response.json();
+    if (data.success) {
+      setPhotos(prev => prev.filter(p => p.id !== photoId));
+    } else {
+      alert(data.error || 'Failed to delete photo');
+    }
+  };
 
   // Save ranking
   const handleSaveRanking = async () => {
@@ -99,32 +114,20 @@ export default function ProfilePhotoPage() {
         setError(data.error || 'Failed to save ranking')
       }
     } catch (err) {
-      setError('Failed to save ranking')
       console.error('Error saving ranking:', err)
+      setError('Failed to save ranking')
     } finally {
       setSaving(false)
     }
   }
 
-  // Allow user to delete their own photo suggestion
-  const handleDelete = async (photoId: string) => {
-    const response = await fetch(`/api/profile-photo-candidates/${photoId}`, {
-      method: 'DELETE',
+  const handleImageClick = (imageUrl: string) => {
+    setSelectedImage({
+      url: imageUrl,
+      alt: "Profile photo option",
+      title: `Profile Photo Option`
     })
-    const data = await response.json()
-    if (data.success) {
-      setPhotos(prev => prev.filter(p => p.id !== photoId))
-    } else {
-      alert(data.error || 'Failed to delete photo')
-    }
-  }
-
-  // Count how many suggestions the current user has made
-  const userSuggestions = photos.filter(p => p.submitted_by === user?.id)
-
-  // Handle successful upload by adding to local state
-  const handleUploadSuccess = (newCandidate: ProfilePhotoCandidate) => {
-    setPhotos(prev => [...prev, newCandidate])
+    setIsImageModalOpen(true)
   }
 
   if (loading) {
@@ -153,7 +156,7 @@ export default function ProfilePhotoPage() {
           </Link>
         </Button>
         <h1 className="text-4xl font-bold tracking-tight text-foreground">
-          Rank & Upload Profile Photos
+          Profile Photo Rankings
         </h1>
       </div>
 
@@ -188,13 +191,18 @@ export default function ProfilePhotoPage() {
                         >
                           <span {...provided.dragHandleProps} className="cursor-grab hover:cursor-grabbing mr-2 flex items-center hover:opacity-80 transition-opacity">
                             <GripVertical className="w-4 h-4 text-muted-foreground mr-2" />
-                            <Image
-                              src={photo.image_url}
-                              alt="Profile option"
-                              width={100}
-                              height={100}
-                              className="rounded-lg object-cover shadow-sm"
-                            />
+                            <button
+                              onClick={() => handleImageClick(photo.image_url)}
+                              className="hover:opacity-80 transition-opacity"
+                            >
+                              <Image
+                                src={photo.image_url}
+                                alt="Profile option"
+                                width={100}
+                                height={100}
+                                className="rounded-lg object-cover shadow-sm"
+                              />
+                            </button>
                           </span>
                           {photo.submitted_by === user?.id && (
                             <Button
@@ -241,30 +249,36 @@ export default function ProfilePhotoPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Upload a New Photo</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Upload className="h-5 w-5" />
+              Upload New Photo
+            </CardTitle>
             <CardDescription>
-              Suggest a new profile photo for this climber
+              Add a new profile photo suggestion for this climber
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {user?.id && (
-              <ProfilePhotoIUpload 
-                userId={userId} 
-                submittedBy={user.id}
-                disabled={userSuggestions.length >= 2}
-                onUploadSuccess={handleUploadSuccess}
-              />
-            )}
-            {userSuggestions.length >= 2 && (
-              <Alert variant="destructive" className="mt-4">
-                <AlertDescription>
-                  You can only suggest 2 photos at a time. Delete one to upload another.
-                </AlertDescription>
-              </Alert>
-            )}
+            <ProfilePhotoIUpload
+              userId={userId}
+              submittedBy={user?.id}
+              onUploadSuccess={(candidate) => {
+                setPhotos(prev => [...prev, candidate])
+              }}
+            />
           </CardContent>
         </Card>
       </div>
+
+      {/* Image Modal */}
+      {selectedImage && (
+        <ImageModal
+          isOpen={isImageModalOpen}
+          onClose={() => setIsImageModalOpen(false)}
+          imageUrl={selectedImage.url}
+          alt={selectedImage.alt}
+          title={selectedImage.title}
+        />
+      )}
     </div>
   )
 }

@@ -127,19 +127,19 @@ export default function LogClimbPage() {
     return (
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
-        <div className="mb-8">
-          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground">
+        <div className="mb-6 md:mb-8">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-foreground">
             ✅ Climb Logged Successfully!
           </h1>
-          <p className="text-muted-foreground mt-2 max-w-2xl">
+          <p className="text-muted-foreground mt-2 max-w-2xl text-sm md:text-base">
             Your climb has been recorded. Keep pushing your limits!
           </p>
         </div>
 
         <Card className="w-full max-w-md mx-auto">
           <CardContent className="pt-6">
-            <div className="text-center space-y-4">
-              <div className="space-y-4">
+            <div className="text-center space-y-3 md:space-y-4">
+              <div className="space-y-3 md:space-y-4">
                 <Button asChild variant="outline" className="text-blue-600 dark:text-blue-400 w-full">
                   <Link href="/dashboard/log-climb" onClick={() => setSuccess(false)}>
                     Log Another Climb
@@ -166,24 +166,26 @@ export default function LogClimbPage() {
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Header Section */}
-      <div className="mb-8">
-        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground">
+      <div className="mb-6 md:mb-8">
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-foreground">
           🧗‍♂️ Log New Climb
         </h1>
-        <p className="text-muted-foreground mt-2 max-w-2xl">
+        <p className="text-muted-foreground mt-2 max-w-2xl text-sm md:text-base">
           Record your latest climbing achievement and track your progress.
         </p>
       </div>
 
       <Card className="w-full max-w-md mx-auto">
-        <CardHeader>
-          <CardTitle>📝 Climb Details</CardTitle>
-          <CardDescription>Fill in the details of your latest send</CardDescription>
+        <CardHeader className="pb-4 md:pb-6">
+          <CardTitle className="text-lg md:text-xl">📝 Climb Details</CardTitle>
+          <CardDescription className="text-sm">
+            Fill in the details of your latest send
+          </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <CardContent className="p-4 md:p-6">
+          <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="climbName">Climb Name *</Label>
+              <Label htmlFor="climbName" className="text-sm md:text-base">Climb Name *</Label>
               <Input
                 type="text"
                 id="climbName"
@@ -191,23 +193,24 @@ export default function LogClimbPage() {
                 onChange={(e) => setClimbName(e.target.value)}
                 required
                 placeholder="what was the proj???"
+                className="text-sm md:text-base"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="sendNotes">Send Notes (Optional)</Label>
+              <Label htmlFor="sendNotes" className="text-sm md:text-base">Send Notes (Optional)</Label>
               <textarea
                 id="sendNotes"
                 value={sendNotes}
                 onChange={(e) => setSendNotes(e.target.value)}
-                rows={4}
-                className="w-full px-3 py-2 border border-input rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring bg-background text-foreground resize-none"
+                rows={3}
+                className="w-full px-3 py-2 border border-input rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring bg-background text-foreground resize-none text-sm md:text-base"
                 placeholder="tell us about it gang"
               />
             </div>
 
             <div className="space-y-2">
-              <Label>Absolute Grade (V-grade) *</Label>
+              <Label className="text-sm md:text-base">Absolute Grade (V-grade) *</Label>
               {!userLoading ? (
                 <>
                   <div className="flex items-center justify-center space-x-2">
@@ -220,15 +223,15 @@ export default function LogClimbPage() {
                         }
                       }}
                       disabled={parseInt(absoluteGrade) <= 0}
-                      className="w-10 h-10 flex items-center justify-center bg-secondary hover:bg-secondary/80 disabled:opacity-50 disabled:cursor-not-allowed rounded-l-lg border border-input transition-colors"
+                      className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center bg-secondary hover:bg-secondary/80 disabled:opacity-50 disabled:cursor-not-allowed rounded-l-lg border border-input transition-colors"
                     >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
                       </svg>
                     </button>
                     
-                    <div className="px-6 py-2 bg-background border-t border-b border-input min-w-[80px] text-center">
-                      <span className="text-lg font-bold">
+                    <div className="px-4 md:px-6 py-2 bg-background border-t border-b border-input min-w-[60px] md:min-w-[80px] text-center">
+                      <span className="text-base md:text-lg font-bold">
                         {absoluteGrade ? `V${absoluteGrade}` : 'V0'}
                       </span>
                     </div>
@@ -242,9 +245,9 @@ export default function LogClimbPage() {
                         }
                       }}
                       disabled={parseInt(absoluteGrade) >= 16}
-                      className="w-10 h-10 flex items-center justify-center bg-secondary hover:bg-secondary/80 disabled:opacity-50 disabled:cursor-not-allowed rounded-r-lg border border-input transition-colors"
+                      className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center bg-secondary hover:bg-secondary/80 disabled:opacity-50 disabled:cursor-not-allowed rounded-r-lg border border-input transition-colors"
                     >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                       </svg>
                     </button>
@@ -289,15 +292,15 @@ export default function LogClimbPage() {
 
             <Separator />
 
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col gap-3 md:gap-4">
               <Button
                 type="submit"
                 disabled={loading}
-                className="flex-1 bg-gray-600 hover:bg-gray-700 dark:bg-gray-400 dark:hover:bg-gray-500"
+                className="w-full bg-gray-600 hover:bg-gray-700 dark:bg-gray-400 dark:hover:bg-gray-500"
               >
                 {loading ? 'Logging...' : 'Log Climb'}
               </Button>
-              <Button asChild variant="outline" className="flex-1">
+              <Button asChild variant="outline" className="w-full">
                 <Link href="/dashboard">
                   Cancel
                 </Link>

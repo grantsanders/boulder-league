@@ -4,6 +4,12 @@ import { useEffect, useState } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import { calculatePersonalPoints } from '@/lib/utils/score-calculator'
 import { Climber } from '@/lib/interfaces/user-info'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { ChevronUp, ChevronDown, Trash2 } from 'lucide-react'
 
 interface AscentWithId {
   id: string
@@ -101,7 +107,11 @@ export default function LogbookPage() {
   }
 
   if (loading || dataLoading) {
-    return <div className="text-center py-8 text-lg">Loading your logbook...</div>
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-lg">Loading your logbook...</div>
+      </div>
+    )
   }
 
   if (!user) {
@@ -111,80 +121,128 @@ export default function LogbookPage() {
   const sortedAscents = getSortedAscents()
 
   return (
-    <main className="max-w-3xl mx-auto py-8 w-full">
-      <h1 className="text-2xl font-bold mb-6">📝 Logbook</h1>
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold tracking-tight text-foreground">
+          📝 Logbook
+        </h1>
+        <p className="text-muted-foreground mt-2">
+          Track all your climbing achievements and manage your ascents.
+        </p>
+      </div>
+
       {dataError ? (
-        <div className="text-red-600 mb-4">{dataError}</div>
+        <Alert variant="destructive">
+          <AlertDescription>{dataError}</AlertDescription>
+        </Alert>
       ) : ascents.length === 0 ? (
-        <div className="text-gray-400">No ascents logged yet.</div>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">No ascents logged yet.</p>
+            </div>
+          </CardContent>
+        </Card>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full border border-black/[0.08] dark:border-white/[0.12] rounded-md overflow-hidden text-left">
-            <thead className="bg-black/[0.05] dark:bg-white/[0.06]">
-              <tr>
-                <th
-                  className="px-3 py-2 border-r border-black/[0.08] dark:border-white/[0.06] text-xs font-semibold text-gray-700 dark:text-gray-200 cursor-pointer select-none"
-                  onClick={() => handleSort('created_at')}
-                >
-                  Date
-                  {sortKey === 'created_at' && (sortDirection === 'asc' ? ' ▲' : ' ▼')}
-                </th>
-                <th
-                  className="px-3 py-2 border-r border-black/[0.08] dark:border-white/[0.06] text-xs font-semibold text-gray-700 dark:text-gray-200 cursor-pointer select-none"
-                  onClick={() => handleSort('name')}
-                >
-                  Problem
-                  {sortKey === 'name' && (sortDirection === 'asc' ? ' ▲' : ' ▼')}
-                </th>
-                <th
-                  className="px-3 py-2 border-r border-black/[0.08] dark:border-white/[0.06] text-xs font-semibold text-gray-700 dark:text-gray-200 cursor-pointer select-none"
-                  onClick={() => handleSort('absolute_grade')}
-                >
-                  Grade
-                  {sortKey === 'absolute_grade' && (sortDirection === 'asc' ? ' ▲' : ' ▼')}
-                </th>
-                <th className="px-3 py-2 border-r border-black/[0.08] dark:border-white/[0.06] text-xs font-semibold text-gray-700 dark:text-gray-200">
-                  Working Grade When Sent
-                </th>
-                <th className="px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200">Points</th>
-                <th className="px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200">Flash?</th>
-                <th className="px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200">Remove</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sortedAscents.map((ascent, idx) => (
-                <tr key={ascent.id} className={idx % 2 === 0 ? 'bg-white dark:bg-black/[0.02]' : 'bg-black/[0.02] dark:bg-white/[0.03]'}>
-                  <td className="px-3 py-1.5 border-r border-black/[0.08] dark:border-white/[0.06] text-gray-900 dark:text-gray-100 whitespace-nowrap">{new Date(ascent.sent_date).toLocaleDateString()}</td>
-                  <td className="px-3 py-1.5 border-r border-black/[0.08] dark:border-white/[0.06] text-gray-900 dark:text-gray-100">{ascent.name || '-'}</td>
-                  <td className="px-3 py-1.5 border-r border-black/[0.08] dark:border-white/[0.06] text-indigo-600 dark:text-indigo-400">V{ascent.absolute_grade}</td>
-                  <td className="px-3 py-1.5 border-r border-black/[0.08] dark:border-white/[0.06] text-blue-600 dark:text-blue-400">V{ascent.working_grade_when_sent}</td>
-                  <td className="px-3 py-1.5 text-yellow-700 dark:text-yellow-400 text-center font-semibold">
-                    {climber ? calculatePersonalPoints(climber, {
-                      id: ascent.id,
-                      name: ascent.name || '',
-                      description: ascent.description,
-                      working_grade_when_sent: ascent.working_grade_when_sent,
-                      absolute_grade: ascent.absolute_grade,
-                      is_flash: ascent.is_flash,
-                      sent_date: ascent.sent_date,
-                      create_date: ascent.create_date
-                    }) : '—'}
-                  </td>
-                  <td className="px-3 py-1.5 text-green-700 dark:text-green-400 text-center">{ascent.is_flash ? '⚡' : '-'}</td>
-                  <td className="px-3 py-1.5 text-center">
-                    <button
-                      onClick={() => handleRemove(ascent.id)}
-                      className="text-red-600 hover:text-red-800 text-xs font-medium underline"
+        <Card>
+          <CardHeader>
+            <CardTitle>Your Ascents</CardTitle>
+            <CardDescription>
+              {ascents.length} total ascents logged
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead 
+                      className="cursor-pointer select-none"
+                      onClick={() => handleSort('created_at')}
                     >
-                      Remove
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                      <div className="flex items-center space-x-1">
+                        <span>Date</span>
+                        {sortKey === 'created_at' && (
+                          sortDirection === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+                        )}
+                      </div>
+                    </TableHead>
+                    <TableHead 
+                      className="cursor-pointer select-none"
+                      onClick={() => handleSort('name')}
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>Problem</span>
+                        {sortKey === 'name' && (
+                          sortDirection === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+                        )}
+                      </div>
+                    </TableHead>
+                    <TableHead 
+                      className="cursor-pointer select-none"
+                      onClick={() => handleSort('absolute_grade')}
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>Grade</span>
+                        {sortKey === 'absolute_grade' && (
+                          sortDirection === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+                        )}
+                      </div>
+                    </TableHead>
+                    <TableHead>Working Grade When Sent</TableHead>
+                    <TableHead>Points</TableHead>
+                    <TableHead>Flash?</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {sortedAscents.map((ascent) => (
+                    <TableRow key={ascent.id}>
+                      <TableCell className="font-medium">
+                        {new Date(ascent.sent_date).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>{ascent.name || '-'}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline">V{ascent.absolute_grade}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="secondary">V{ascent.working_grade_when_sent}</Badge>
+                      </TableCell>
+                      <TableCell className="font-semibold">
+                        {climber ? calculatePersonalPoints(climber, {
+                          id: ascent.id,
+                          name: ascent.name || '',
+                          description: ascent.description,
+                          working_grade_when_sent: ascent.working_grade_when_sent,
+                          absolute_grade: ascent.absolute_grade,
+                          is_flash: ascent.is_flash,
+                          sent_date: ascent.sent_date,
+                          create_date: ascent.create_date
+                        }) : '—'}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={ascent.is_flash ? "default" : "secondary"}>
+                          {ascent.is_flash ? 'Yes' : 'No'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemove(ascent.id)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
       )}
-    </main>
+    </div>
   )
 } 

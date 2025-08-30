@@ -4,6 +4,11 @@ import { useEffect, useState } from 'react'
 import { Climber } from '@/lib/interfaces/user-info'
 import { useAuth } from '@/lib/auth-context'
 import Link from 'next/link'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { User, ArrowRight } from 'lucide-react'
 
 export default function ProfilesPage() {
   const { user } = useAuth()
@@ -35,7 +40,7 @@ export default function ProfilesPage() {
 
   if (loading) {
     return (
-      <div className="text-center">
+      <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-lg">Loading profiles...</div>
       </div>
     )
@@ -43,9 +48,9 @@ export default function ProfilesPage() {
 
   if (error) {
     return (
-      <div className="text-center">
-        <div className="text-red-600">Error: {error}</div>
-      </div>
+      <Alert variant="destructive">
+        <AlertDescription>Error: {error}</AlertDescription>
+      </Alert>
     )
   }
 
@@ -53,63 +58,80 @@ export default function ProfilesPage() {
   const filteredClimbers = climbers.filter(climber => climber.id !== user?.id)
 
   return (
-    <>
-      <section className="flex flex-col items-center gap-4 text-center text-sm/6 font-[family-name:var(--font-geist-mono)] sm:text-left sm:items-start">
-        <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-center sm:text-left">
-          👤 Climber Profiles
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold tracking-tight text-foreground">
+          Profile Photos
         </h1>
-        <p className="text-gray-400 max-w-xl text-center sm:text-left">
-          View and vote on climber profile photos.
+        <p className="text-muted-foreground mt-2">
+          Choose the worst photo you can think of for your friends!
         </p>
-      </section>
+      </div>
 
-      <section className="flex flex-col gap-2 text-sm/6 font-[family-name:var(--font-geist-mono)] text-left w-full">
-        <h2 className="text-base sm:text-lg font-semibold">🎯 Choose a Profile to Vote/Upload</h2>
-        
-        {filteredClimbers.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredClimbers.map(climber => (
-              <div key={climber.id} className="bg-white dark:bg-black p-6 rounded-lg border border-black/[0.08] dark:border-white/[0.12] flex flex-col items-center text-center">
-                <div className="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center text-2xl font-bold text-gray-600 mb-4">
-                  {climber.first_name.charAt(0)}{climber.last_name.charAt(0)}
-                </div>
-                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
-                  {climber.first_name} {climber.last_name}
-                </h3>
-                {climber.nickname && (
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
-                    &ldquo;{climber.nickname}&rdquo;
-                  </p>
-                )}
-                <div className="text-xs text-gray-500 dark:text-gray-400 mb-4 space-y-1">
-                  <div>Working Grade: V{climber.working_grade}</div>
-                  <div>Score: {climber.running_score} pts</div>
-                </div>
-                <Link
-                  href={`/dashboard/profiles/${climber.id}`}
-                  className="text-indigo-600 hover:text-indigo-500 text-sm font-medium"
-                >
-                  View & Vote →
-                </Link>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <div className="text-gray-500">No climbers found</div>
-          </div>
-        )}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <User className="h-5 w-5" />
+            Choose a Profile to Vote/Upload
+          </CardTitle>
+          <CardDescription>
+            Total climbers: {filteredClimbers.length}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {filteredClimbers.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredClimbers.map(climber => (
+                <Card key={climber.id} className="flex flex-col items-center text-center">
+                  <CardContent className="pt-6 w-full">
+                    {climber.profile_photo_url ? (
+                      <img 
+                        src={climber.profile_photo_url} 
+                        alt={`${climber.first_name} ${climber.last_name}`}
+                        className="w-20 h-20 rounded-full object-cover mb-4 mx-auto"
+                      />
+                    ) : (
+                      <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center text-3xl font-bold text-muted-foreground mb-4 mx-auto">
+                        {climber.first_name.charAt(0)}{climber.last_name.charAt(0)}
+                      </div>
+                    )}
+                    <h3 className="font-semibold text-foreground mb-1">
+                      {climber.first_name} {climber.last_name}
+                    </h3>
+                    {climber.nickname && (
+                      <p className="text-sm text-muted-foreground mb-3">
+                        &ldquo;{climber.nickname}&rdquo;
+                      </p>
+                    )}
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center justify-center gap-2">
+                        <Badge variant="outline">V{climber.working_grade}</Badge>
+                        <Badge variant="secondary">{climber.running_score} pts</Badge>
+                      </div>
+                    </div>
+                    <Button asChild variant="outline" className="w-full">
+                      <Link href={`/dashboard/profiles/${climber.id}`}>
+                        View & Vote
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">No climbers found</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
-        <p className="text-xs text-gray-500 mt-4">
-          Total climbers: {filteredClimbers.length}
-        </p>
-      </section>
-
-      <section className="flex flex-col gap-2 text-sm/6 font-[family-name:var(--font-geist-mono)] text-left">
-        <Link href="/dashboard" className="text-indigo-600 hover:text-indigo-500 text-sm font-medium">
-          ← Back to Dashboard
-        </Link>
-      </section>
-    </>
+      <div className="mt-8">
+        <Button asChild variant="outline">
+          <Link href="/dashboard">← Back to Dashboard</Link>
+        </Button>
+      </div>
+    </div>
   )
 }

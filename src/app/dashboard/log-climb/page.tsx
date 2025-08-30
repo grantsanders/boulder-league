@@ -3,6 +3,11 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
 
 export default function LogClimbPage() {
   const { user } = useAuth()
@@ -110,193 +115,197 @@ export default function LogClimbPage() {
 
   if (userLoading) {
     return (
-      <div className="text-center">
-        <div className="text-lg">Loading your climbing profile...</div>
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-lg">Loading your climbing profile...</div>
+        </div>
       </div>
     )
   }
 
   if (success) {
     return (
-      <>
-        <section className="flex flex-col items-center gap-4 text-center text-sm/6 font-[family-name:var(--font-geist-mono)] sm:text-left sm:items-start">
-          <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-center sm:text-left">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header Section */}
+        <div className="mb-8">
+          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground">
             ✅ Climb Logged Successfully!
           </h1>
-          <p className="text-gray-400 max-w-xl text-center sm:text-left">
+          <p className="text-muted-foreground mt-2 max-w-2xl">
             Your climb has been recorded. Keep pushing your limits!
           </p>
-        </section>
+        </div>
 
-        <section className="flex flex-col gap-2 text-sm/6 font-[family-name:var(--font-geist-mono)] text-left">
-          <div className="text-center space-y-4">
-            <Link
-              href="/dashboard/log-climb"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
-              onClick={() => setSuccess(false)}
-            >
-              Log Another Climb
-            </Link>
-            <div className="block">
-              <Link
-                href="/dashboard"
-                className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors"
-              >
-                ← Back to Dashboard
-              </Link>
+        <Card className="w-full max-w-md mx-auto">
+          <CardContent className="pt-6">
+            <div className="text-center space-y-4">
+              <div className="space-y-4">
+                <Button asChild variant="outline" className="text-blue-600 dark:text-blue-400 w-full">
+                  <Link href="/dashboard/log-climb" onClick={() => setSuccess(false)}>
+                    Log Another Climb
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="text-purple-600 dark:text-purple-400 w-full">
+                  <Link href="/dashboard/logbook">
+                    View Logbook
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="w-full">
+                  <Link href="/dashboard">
+                    ← Back to Dashboard
+                  </Link>
+                </Button>
+              </div>
             </div>
-          </div>
-        </section>
-      </>
+          </CardContent>
+        </Card>
+      </div>
     )
   }
 
   return (
-    <>
-      <section className="flex flex-col items-center gap-4 text-center text-sm/6 font-[family-name:var(--font-geist-mono)] sm:text-left sm:items-start">
-        <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-center sm:text-left">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Header Section */}
+      <div className="mb-8">
+        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground">
           🧗‍♂️ Log New Climb
         </h1>
-        <p className="text-gray-400 max-w-xl text-center sm:text-left">
+        <p className="text-muted-foreground mt-2 max-w-2xl">
           Record your latest climbing achievement and track your progress.
         </p>
-      </section>
+      </div>
 
-      <section className="flex flex-col gap-2 text-sm/6 font-[family-name:var(--font-geist-mono)] text-left w-full max-w-md mx-auto">
-        <h2 className="text-base sm:text-lg font-semibold">📝 Climb Details</h2>
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="climbName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Climb Name *
-            </label>
-            <input
-              type="text"
-              id="climbName"
-              value={climbName}
-              onChange={(e) => setClimbName(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white"
-              placeholder="what was the proj???"
-            />
-          </div>
+      <Card className="w-full max-w-md mx-auto">
+        <CardHeader>
+          <CardTitle>📝 Climb Details</CardTitle>
+          <CardDescription>Fill in the details of your latest send</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="climbName">Climb Name *</Label>
+              <Input
+                type="text"
+                id="climbName"
+                value={climbName}
+                onChange={(e) => setClimbName(e.target.value)}
+                required
+                placeholder="what was the proj???"
+              />
+            </div>
 
-          <div>
-            <label htmlFor="sendNotes" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Send Notes (Optional)
-            </label>
-            <textarea
-              id="sendNotes"
-              value={sendNotes}
-              onChange={(e) => setSendNotes(e.target.value)}
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white resize-none"
-              placeholder="tell us about it gang"
-            />
-          </div>
+            <div className="space-y-2">
+              <Label htmlFor="sendNotes">Send Notes (Optional)</Label>
+              <textarea
+                id="sendNotes"
+                value={sendNotes}
+                onChange={(e) => setSendNotes(e.target.value)}
+                rows={4}
+                className="w-full px-3 py-2 border border-input rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring bg-background text-foreground resize-none"
+                placeholder="tell us about it gang"
+              />
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-              Absolute Grade (V-grade) *
-            </label>
-            {!userLoading ? (
-              <>
-                <div className="flex items-center justify-center space-x-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const currentGrade = parseInt(absoluteGrade) || 0
-                      if (currentGrade > 0) {
-                        setAbsoluteGrade((currentGrade - 1).toString())
-                      }
-                    }}
-                    disabled={parseInt(absoluteGrade) <= 0}
-                    className="w-10 h-10 flex items-center justify-center bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-l-lg border border-gray-300 dark:border-gray-600 transition-colors"
-                  >
-                    <svg className="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
-                    </svg>
-                  </button>
-                  
-                  <div className="px-6 py-2 bg-white dark:bg-gray-800 border-t border-b border-gray-300 dark:border-gray-600 min-w-[80px] text-center">
-                    <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                      {absoluteGrade ? `V${absoluteGrade}` : 'V0'}
-                    </span>
+            <div className="space-y-2">
+              <Label>Absolute Grade (V-grade) *</Label>
+              {!userLoading ? (
+                <>
+                  <div className="flex items-center justify-center space-x-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const currentGrade = parseInt(absoluteGrade) || 0
+                        if (currentGrade > 0) {
+                          setAbsoluteGrade((currentGrade - 1).toString())
+                        }
+                      }}
+                      disabled={parseInt(absoluteGrade) <= 0}
+                      className="w-10 h-10 flex items-center justify-center bg-secondary hover:bg-secondary/80 disabled:opacity-50 disabled:cursor-not-allowed rounded-l-lg border border-input transition-colors"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                      </svg>
+                    </button>
+                    
+                    <div className="px-6 py-2 bg-background border-t border-b border-input min-w-[80px] text-center">
+                      <span className="text-lg font-bold">
+                        {absoluteGrade ? `V${absoluteGrade}` : 'V0'}
+                      </span>
+                    </div>
+                    
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const currentGrade = parseInt(absoluteGrade) || 0
+                        if (currentGrade < 16) {
+                          setAbsoluteGrade((currentGrade + 1).toString())
+                        }
+                      }}
+                      disabled={parseInt(absoluteGrade) >= 16}
+                      className="w-10 h-10 flex items-center justify-center bg-secondary hover:bg-secondary/80 disabled:opacity-50 disabled:cursor-not-allowed rounded-r-lg border border-input transition-colors"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                    </button>
                   </div>
                   
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const currentGrade = parseInt(absoluteGrade) || 0
-                      if (currentGrade < 16) {
-                        setAbsoluteGrade((currentGrade + 1).toString())
-                      }
-                    }}
-                    disabled={parseInt(absoluteGrade) >= 16}
-                    className="w-10 h-10 flex items-center justify-center bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-r-lg border border-gray-300 dark:border-gray-600 transition-colors"
-                  >
-                    <svg className="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
-                  </button>
+                  <p className="text-xs text-muted-foreground text-center">
+                    Your working grade: V{userWorkingGrade} • Use + and - buttons to adjust
+                  </p>
+                </>
+              ) : (
+                <div className="flex items-center justify-center py-4">
+                  <div className="text-sm text-muted-foreground">
+                    Loading your working grade...
+                  </div>
                 </div>
-                
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
-                  Your working grade: V{userWorkingGrade} • Use + and - buttons to adjust
-                </p>
-              </>
-            ) : (
-              <div className="flex items-center justify-center py-4">
-                <div className="text-sm text-gray-500 dark:text-gray-400">
-                  Loading your working grade...
-                </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
 
-          <div>
-            <label className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3">
               <input
                 type="checkbox"
                 id="isFlash"
                 checked={isFlash}
                 onChange={(e) => setIsFlash(e.target.checked)}
-                className="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                className="w-4 h-4 text-primary bg-background border-input rounded focus:ring-2 focus:ring-ring focus:ring-offset-2"
               />
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <Label htmlFor="isFlash" className="text-sm font-medium">
                 Did you flash?
-              </span>
+              </Label>
               {isFlash && (
-                <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                <span className="text-xs text-muted-foreground ml-2">
                   dude nice
                 </span>
               )}
-            </label>
-          </div>
-
-          {error && (
-            <div className="text-red-600 text-sm bg-red-50 dark:bg-red-900/20 p-3 rounded-md">
-              {error}
             </div>
-          )}
 
-          <div className="flex flex-col sm:flex-row gap-4 pt-4">
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex-1 inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              {loading ? 'Logging...' : 'Log Climb'}
-            </button>
-            <Link
-              href="/dashboard"
-              className="flex-1 inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
-            >
-              Cancel
-            </Link>
-          </div>
-        </form>
-      </section>
-    </>
+            {error && (
+              <div className="text-destructive text-sm bg-destructive/10 p-3 rounded-md">
+                {error}
+              </div>
+            )}
+
+            <Separator />
+
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button
+                type="submit"
+                disabled={loading}
+                className="flex-1 bg-gray-600 hover:bg-gray-700 dark:bg-gray-400 dark:hover:bg-gray-500"
+              >
+                {loading ? 'Logging...' : 'Log Climb'}
+              </Button>
+              <Button asChild variant="outline" className="flex-1">
+                <Link href="/dashboard">
+                  Cancel
+                </Link>
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   )
 } 

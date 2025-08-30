@@ -4,7 +4,7 @@ A climbing competition scoring system built with Next.js and Supabase.
 
 ## Features
 
-- 🧗‍♂️ Boulder League scoring system
+- 🧗‍♂️ Scoring system
 - 🔐 User authentication with Supabase
 - 📊 Dashboard for tracking progress
 - 🎯 Working grade calculation

@@ -8,6 +8,11 @@ import { useAuth } from '@/lib/auth-context'
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
 import ProfilePhotoIUpload from '../ProfilePhotoIUpload'
 import { ProfilePhotoCandidate } from '@/lib/interfaces/voting'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { ArrowLeft, GripVertical, X, Upload } from 'lucide-react'
 
 export default function ProfilePhotoPage() {
   const { user } = useAuth()
@@ -122,94 +127,144 @@ export default function ProfilePhotoPage() {
     setPhotos(prev => [...prev, newCandidate])
   }
 
-  if (loading) return <div className="text-center py-8">Loading...</div>
-  if (error) return <div className="text-center text-red-600 py-8">{error}</div>
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-lg">Loading...</div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <Alert variant="destructive">
+        <AlertDescription>{error}</AlertDescription>
+      </Alert>
+    )
+  }
 
   return (
-    <main className="max-w-xl mx-auto py-8">
-      <Link href="/dashboard/profiles" className="text-indigo-600 dark:text-indigo-400 hover:underline mb-4 block">
-        ← Back to Profiles
-      </Link>
-      <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Rank & Upload Profile Photos</h1>
+    <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mb-8">
+        <Button asChild variant="ghost" className="mb-4">
+          <Link href="/dashboard/profiles">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Profiles
+          </Link>
+        </Button>
+        <h1 className="text-4xl font-bold tracking-tight text-foreground">
+          Rank & Upload Profile Photos
+        </h1>
+      </div>
+
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="photos">
           {(provided) => (
-            <ul
-              className="space-y-4 mb-8"
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-            >
-              {photos.map((photo, idx) => (
-                <Draggable key={photo.id} draggableId={String(photo.id)} index={idx}>
-                  {(provided, snapshot) => (
-                    <li
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      className={`flex items-center gap-4 rounded p-4 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 transition-all ${
-                        snapshot.isDragging ? 'ring-2 ring-indigo-400 shadow-lg' : 'hover:shadow-md'
-                      }`}
-                    >
-                      <span {...provided.dragHandleProps} className="cursor-grab hover:cursor-grabbing mr-2 flex items-center hover:opacity-80 transition-opacity">
-                        {/* Hamburger Icon */}
-                        <svg className="w-4 h-4 text-gray-400 dark:text-gray-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
-                        </svg>
-                        <Image
-                          src={photo.image_url}
-                          alt="Profile option"
-                          width={100}
-                          height={100}
-                          className="rounded-lg object-cover shadow-sm"
-                        />
-                      </span>
-                      {photo.submitted_by === user?.id && (
-                        <button
-                          className="ml-2 text-red-500 hover:text-red-700 cursor-pointer"
-                          onClick={() => handleDelete(photo.id)}
-                          title="Delete suggestion"
+            <Card className="mb-8">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Upload className="h-5 w-5" />
+                  Photo Rankings
+                </CardTitle>
+                <CardDescription>
+                  Drag and drop to reorder your preferred profile photos
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul
+                  className="space-y-4"
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                >
+                  {photos.map((photo, idx) => (
+                    <Draggable key={photo.id} draggableId={String(photo.id)} index={idx}>
+                      {(provided, snapshot) => (
+                        <li
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          className={`flex items-center gap-4 rounded-lg p-4 bg-card border transition-all ${
+                            snapshot.isDragging ? 'ring-2 ring-primary shadow-lg' : 'hover:shadow-md'
+                          }`}
                         >
-                          ✕
-                        </button>
+                          <span {...provided.dragHandleProps} className="cursor-grab hover:cursor-grabbing mr-2 flex items-center hover:opacity-80 transition-opacity">
+                            <GripVertical className="w-4 h-4 text-muted-foreground mr-2" />
+                            <Image
+                              src={photo.image_url}
+                              alt="Profile option"
+                              width={100}
+                              height={100}
+                              className="rounded-lg object-cover shadow-sm"
+                            />
+                          </span>
+                          {photo.submitted_by === user?.id && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDelete(photo.id)}
+                              className="text-destructive hover:text-destructive"
+                              title="Delete suggestion"
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          )}
+                          <span className="ml-auto">
+                            <Badge variant="secondary">
+                              #{idx + 1}
+                            </Badge>
+                          </span>
+                        </li>
                       )}
-                      <span className="ml-auto flex items-center gap-2">
-                        <span className="text-sm font-medium text-gray-600 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">
-                          #{idx + 1}
-                        </span>
-                      </span>
-                    </li>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </ul>
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </ul>
+              </CardContent>
+            </Card>
           )}
         </Droppable>
       </DragDropContext>
-      <button
-        className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded mb-4 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
-        onClick={handleSaveRanking}
-        disabled={saving}
-      >
-        {saving ? 'Saving...' : 'Save Ranking'}
-      </button>
-      {success && <div className="text-green-600 mb-4">{success}</div>}
-      <div className="rounded p-4 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-700">
-        <h2 className="font-semibold mb-2 text-gray-900 dark:text-white">Upload a New Photo</h2>
-        {/* Limit to 2 suggestions per user */}
-        {user?.id && (
-          <ProfilePhotoIUpload 
-            userId={userId} 
-            submittedBy={user.id}
-            disabled={userSuggestions.length >= 2}
-            onUploadSuccess={handleUploadSuccess}
-          />
+
+      <div className="space-y-4">
+        <Button
+          onClick={handleSaveRanking}
+          disabled={saving}
+          className="w-full sm:w-auto"
+        >
+          {saving ? 'Saving...' : 'Save Ranking'}
+        </Button>
+
+        {success && (
+          <Alert>
+            <AlertDescription>{success}</AlertDescription>
+          </Alert>
         )}
-        {userSuggestions.length >= 2 && (
-          <div className="text-xs text-red-500 mt-2">
-            You can only suggest 2 photos at a time. Delete one to upload another.
-          </div>
-        )}
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Upload a New Photo</CardTitle>
+            <CardDescription>
+              Suggest a new profile photo for this climber
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {user?.id && (
+              <ProfilePhotoIUpload 
+                userId={userId} 
+                submittedBy={user.id}
+                disabled={userSuggestions.length >= 2}
+                onUploadSuccess={handleUploadSuccess}
+              />
+            )}
+            {userSuggestions.length >= 2 && (
+              <Alert variant="destructive" className="mt-4">
+                <AlertDescription>
+                  You can only suggest 2 photos at a time. Delete one to upload another.
+                </AlertDescription>
+              </Alert>
+            )}
+          </CardContent>
+        </Card>
       </div>
-    </main>
+    </div>
   )
 }

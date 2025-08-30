@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tag, ArrowRight } from 'lucide-react'
+import Image from 'next/image'
 
 export default function NicknamesPage() {
   const { user } = useAuth()
@@ -83,9 +84,11 @@ export default function NicknamesPage() {
                 <Card key={climber.id} className="flex flex-col items-center text-center">
                   <CardContent className="pt-6 w-full">
                     {climber.profile_photo_url ? (
-                      <img 
+                      <Image 
                         src={climber.profile_photo_url} 
                         alt={`${climber.first_name} ${climber.last_name}`}
+                        width={80}
+                        height={80}
                         className="w-20 h-20 rounded-full object-cover mb-4 mx-auto"
                       />
                     ) : (

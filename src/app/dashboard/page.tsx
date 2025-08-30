@@ -6,6 +6,10 @@ import { useEffect, useState } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import { Climber } from '@/lib/interfaces/user-info'
 import { Ascent } from '@/lib/interfaces/scoring'
+
+interface AscentWithClimber extends Ascent {
+  climber_id: string;
+}
 import Modal from '@/lib/components/Modal'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -22,7 +26,7 @@ export default function DashboardPage() {
   const [dataError, setDataError] = useState<string | null>(null)
   const [isPromotionModalOpen, setIsPromotionModalOpen] = useState(false)
   const [nextGradeAscents, setNextGradeAscents] = useState<string>('')
-  const [allAscents, setAllAscents] = useState<any[]>([])
+  const [allAscents, setAllAscents] = useState<AscentWithClimber[]>([])
   const [climbers, setClimbers] = useState<Climber[]>([])
   const [descriptionModal, setDescriptionModal] = useState<{isOpen: boolean, description: string, climberName: string, climbName: string}>({
     isOpen: false,

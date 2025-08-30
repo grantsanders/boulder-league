@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Trophy, Award } from 'lucide-react'
+import Image from 'next/image'
 
 export default function LeaderboardPage() {
   const [climbers, setClimbers] = useState<Climber[]>([])
@@ -84,9 +85,11 @@ export default function LeaderboardPage() {
                 <div className="flex flex-col items-center">
                   <div className="w-20 h-20 rounded-full border-4 border-background bg-muted flex items-center justify-center shadow-lg -mb-4 z-10 overflow-hidden">
                     {podium[1].profile_photo_url ? (
-                      <img 
+                      <Image 
                         src={podium[1].profile_photo_url} 
                         alt={`${podium[1].first_name} ${podium[1].last_name}`}
+                        width={64}
+                        height={64}
                         className="w-16 h-16 rounded-full object-cover"
                       />
                     ) : (
@@ -107,9 +110,11 @@ export default function LeaderboardPage() {
                 <div className="flex flex-col items-center">
                   <div className="w-24 h-24 rounded-full border-4 border-background bg-muted flex items-center justify-center shadow-xl -mb-6 z-20 overflow-hidden">
                     {podium[0].profile_photo_url ? (
-                      <img 
+                      <Image 
                         src={podium[0].profile_photo_url} 
                         alt={`${podium[0].first_name} ${podium[0].last_name}`}
+                        width={80}
+                        height={80}
                         className="w-20 h-20 rounded-full object-cover"
                       />
                     ) : (
@@ -130,9 +135,11 @@ export default function LeaderboardPage() {
                 <div className="flex flex-col items-center">
                   <div className="w-20 h-20 rounded-full border-4 border-background bg-muted flex items-center justify-center shadow-lg -mb-4 z-10 overflow-hidden">
                     {podium[2].profile_photo_url ? (
-                      <img 
+                      <Image 
                         src={podium[2].profile_photo_url} 
                         alt={`${podium[2].first_name} ${podium[2].last_name}`}
+                        width={64}
+                        height={64}
                         className="w-16 h-16 rounded-full object-cover"
                       />
                     ) : (

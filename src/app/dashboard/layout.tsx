@@ -7,12 +7,12 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Climber } from '@/lib/interfaces/user-info'
+import Image from 'next/image'
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const { user, loading, signOut } = useAuth()
   const router = useRouter()
   const [climberData, setClimberData] = useState<Climber | null>(null)
-  const [climberLoading, setClimberLoading] = useState(true)
 
   useEffect(() => {
     if (!loading && !user) {
@@ -23,7 +23,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   useEffect(() => {
     const fetchClimberData = async () => {
       if (!user?.id) {
-        setClimberLoading(false)
         return
       }
 
@@ -36,8 +35,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         }
       } catch (err) {
         console.error('Error fetching climber data:', err)
-      } finally {
-        setClimberLoading(false)
       }
     }
 
@@ -102,9 +99,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-3">
                 {climberData?.profile_photo_url ? (
-                  <img 
+                  <Image 
                     src={climberData.profile_photo_url} 
                     alt="Profile" 
+                    width={32}
+                    height={32}
                     className="w-8 h-8 rounded-full object-cover"
                   />
                 ) : (

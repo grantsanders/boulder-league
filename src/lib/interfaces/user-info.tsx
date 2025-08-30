@@ -1,8 +1,10 @@
 export interface Climber {
     id: string;
+    uuid?: string; 
     first_name: string;
     last_name: string;
     nickname: string; // probably end up being FK to nickname table
+    profile_photo_url?: string; // URL to the winning profile photo
     running_score: number;
     working_grade: number;
     ascents_of_next_grade: number;
@@ -10,12 +12,12 @@ export interface Climber {
 }
 
 export interface Nickname {
-    id: string;
+    uuid: string;
     submitted_by: string;
-    climber_id: string;
+    climber_uuid: string;
     nickname: string;
 }
 
 export interface Identity {
-    id: string;
+    uuid: string;
 }

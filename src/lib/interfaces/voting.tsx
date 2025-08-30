@@ -28,10 +28,12 @@ export interface VoteSummary {
 }
 
 export interface ProfilePhotoCandidate {
-    uuid: string;
+    id: string;
+    uuid?: string; // Keep for backward compatibility
     user_id: string;
     image_url: string;
     submitted_by: string;
+    created_at?: string;
 }
 
 export interface NicknameCandidate {

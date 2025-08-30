@@ -204,7 +204,19 @@ export default function DashboardPage() {
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <Modal isOpen={isPromotionModalOpen} onClose={() => setIsPromotionModalOpen(false)}>
+      <Modal isOpen={isPromotionModalOpen} onClose={() => {
+        // Only allow closing if a valid value has been submitted
+        const isValidValue = nextGradeAscents !== '' && 
+          !isNaN(parseInt(nextGradeAscents)) && 
+          parseInt(nextGradeAscents) >= 0 && 
+          parseInt(nextGradeAscents) <= climberData!.working_grade + 1;
+        
+        if (!isValidValue) {
+          // Don't close the modal if the value is invalid
+          return;
+        }
+        setIsPromotionModalOpen(false);
+      }}>
         <h2 className="text-lg font-semibold mb-4">{'You\'ve been promoted!'}</h2>
         <p className="mb-4">
           As of your last tick, you are officially a V{climberData!.working_grade} climber. <br /> <br />
@@ -232,6 +244,9 @@ export default function DashboardPage() {
               Must be between 0 and {climberData!.working_grade + 1}
             </p>
           )}
+          <p className="text-xs text-muted-foreground mt-2">
+            You must enter a valid value to continue.
+          </p>
           <div className="flex justify-end">
             <button
               disabled={
@@ -343,7 +358,7 @@ export default function DashboardPage() {
               <CardContent className="p-0 text-center flex items-center justify-center h-full">
                 <div>
                   <div className="text-xs md:text-sm font-medium text-muted-foreground mb-1 md:mb-2">Problems Sent</div>
-                  <div className="text-sm md:text-2xl font-bold text-purple-600">{ascentsData.length}</div>
+                  <div className="text-sm md:text-2xl font-bold text-purple-600">{ascentsData.length}n</div>
                 </div>
               </CardContent>
             </Card>
@@ -355,10 +370,7 @@ export default function DashboardPage() {
                     V{climberData?.working_grade ? climberData.working_grade + 1 : 1} Sends
                   </div>
                   <div className="text-sm md:text-2xl font-bold text-pink-600">
-                    {climberData?.working_grade ? 
-                      (climberData.working_grade + 1) -
-                      (climberData.ascents_of_next_grade +
-                        ascentsData?.filter(x => x.absolute_grade == (climberData.working_grade + 1)).length) : 0}
+                    {(climberData!.ascents_of_next_grade + ascentsData?.filter(x => x.absolute_grade == (climberData!.working_grade + 1)).length)}
                   </div>
                 </div>
               </CardContent>

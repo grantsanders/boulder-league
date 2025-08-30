@@ -114,8 +114,8 @@ export default function Home() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="text-sm md:text-base">Relative Grade</TableHead>
-                      <TableHead className="text-sm md:text-base">Points</TableHead>
+                      <TableHead className="text-sm md:text-base px-4">Relative Grade</TableHead>
+                      <TableHead className="text-sm md:text-base text-right px-4">Points</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -130,8 +130,8 @@ export default function Home() {
                       ['Working Grade - 4 or lower', 0],
                     ].map(([label, score]) => (
                       <TableRow key={label}>
-                        <TableCell className="font-medium text-sm md:text-base">{label}</TableCell>
-                        <TableCell className="text-sm md:text-base">{score}</TableCell>
+                        <TableCell className="font-medium text-sm md:text-base px-4">{label}</TableCell>
+                        <TableCell className="text-sm md:text-base text-right px-4">{score}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

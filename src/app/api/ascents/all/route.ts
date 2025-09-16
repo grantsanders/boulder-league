@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/server'
+import { getSupabaseSchema } from '@/lib/utils'
 import { NextResponse } from 'next/server'
 
 export async function GET() {
@@ -7,7 +8,7 @@ export async function GET() {
     
     // Get all ascents with climber information
     const { data, error } = await supabase
-      .schema('boulder-league-dev')
+      .schema(getSupabaseSchema())
       .from('ascents')
       .select(`
         *,

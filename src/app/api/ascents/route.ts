@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/server'
+import { getSupabaseSchema } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
@@ -7,7 +8,7 @@ export async function GET(request: NextRequest) {
   const climber_id = searchParams.get('climber_id')
   const user_id = searchParams.get('user_id')
 
-  let query = supabase.schema('boulder-league-dev').from('ascents').select('*')
+  let query = supabase.schema(getSupabaseSchema()).from('ascents').select('*')
   if (climber_id) query = query.eq('user_id', climber_id) // Use user_id instead of climber_id
   if (user_id) query = query.eq('user_id', user_id)
 
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
 
     // Create the ascent record
     const { data, error } = await supabase
-      .schema('boulder-league-dev')
+      .schema(getSupabaseSchema())
       .from('ascents')
       .insert([{
         name,

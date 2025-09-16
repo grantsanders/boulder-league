@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/server'
+import { getSupabaseSchema } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
@@ -6,7 +7,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const user_id = searchParams.get('user_id')
 
-  let query = supabase.schema('boulder-league-dev').from('profile_photo_candidates').select('*')
+  let query = supabase.schema(getSupabaseSchema()).from('profile_photo_candidates').select('*')
   if (user_id) query = query.eq('user_id', user_id)
 
   const { data, error } = await query
@@ -27,7 +28,7 @@ export async function POST(req: Request) {
   }
 
   const { data, error } = await supabase
-    .schema('boulder-league-dev')
+    .schema(getSupabaseSchema())
     .from('profile_photo_candidates')
     .insert([{ user_id, image_url, submitted_by }])
     .select()

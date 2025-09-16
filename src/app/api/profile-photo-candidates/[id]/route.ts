@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/server'
+import { getSupabaseSchema } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function DELETE(request: NextRequest, context: { params: Promise<{ id: string }> }) {
@@ -6,7 +7,7 @@ export async function DELETE(request: NextRequest, context: { params: Promise<{ 
   const { id } = await context.params
 
   const { error } = await supabase
-    .schema('boulder-league-dev')
+    .schema(getSupabaseSchema())
     .from('profile_photo_candidates')
     .delete()
     .eq('id', id)

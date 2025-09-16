@@ -17,11 +17,18 @@ export default function LogClimbPage() {
   const [absoluteGrade, setAbsoluteGrade] = useState('')
   const [isFlash, setIsFlash] = useState(false)
   const [sendNotes, setSendNotes] = useState('')
+  const [climbDate, setClimbDate] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [userWorkingGrade, setUserWorkingGrade] = useState(0)
   const [userLoading, setUserLoading] = useState(true)
+
+  // Initialize climb date to today
+  useEffect(() => {
+    const today = new Date().toISOString().split('T')[0]
+    setClimbDate(today)
+  }, [])
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -67,7 +74,7 @@ export default function LogClimbPage() {
         working_grade_when_sent: userWorkingGrade,
         absolute_grade: parseInt(absoluteGrade),
         is_flash: isFlash,
-        sent_date: new Date().toISOString().split('T')[0], // Today's date in YYYY-MM-DD format
+        sent_date: climbDate, // Use selected date in YYYY-MM-DD format
         create_date: new Date().toISOString(),
         climber_id: user?.id
       }
@@ -109,6 +116,7 @@ export default function LogClimbPage() {
         setAbsoluteGrade('')
         setIsFlash(false)
         setSendNotes('')
+        setClimbDate(new Date().toISOString().split('T')[0]) // Reset to today
       } else {
         setError(result.error || 'Failed to log climb. Please try again.')
       }
@@ -202,6 +210,22 @@ export default function LogClimbPage() {
                 placeholder="what was the proj???"
                 className="text-sm md:text-base"
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="climbDate" className="text-sm md:text-base">Date Climbed *</Label>
+              <Input
+                type="date"
+                id="climbDate"
+                value={climbDate}
+                onChange={(e) => setClimbDate(e.target.value)}
+                min="2025-09-01"
+                required
+                className="text-sm md:text-base"
+              />
+              <p className="text-xs text-muted-foreground">
+                Select the date you completed this climb (must be after September 1, 2025)
+              </p>
             </div>
 
             <div className="space-y-2">

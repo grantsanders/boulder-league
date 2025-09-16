@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/server'
+import { getSupabaseSchema } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
@@ -6,7 +7,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const id = searchParams.get('id')
 
-  let query = supabase.schema('boulder-league-dev').from('climbers').select('*')
+  let query = supabase.schema(getSupabaseSchema()).from('climbers').select('*')
   if (id) query = query.eq('id', id)
 
   const { data, error } = await query
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
 
     // Create the climber record
     const { data, error } = await supabase
-      .schema('boulder-league-dev')
+      .schema(getSupabaseSchema())
       .from('climbers')
       .insert([{
         id,
@@ -83,7 +84,7 @@ export async function PUT(request: NextRequest) {
 
     // Update the climber's running score
     const { data, error } = await supabase
-      .schema('boulder-league-dev')
+      .schema(getSupabaseSchema())
       .from('climbers')
       .update({ running_score: new_score })
       .eq('id', climber_id)
@@ -119,7 +120,7 @@ export async function PATCH(request: NextRequest) {
 
     // Update the climber's ascents_of_next_grade and promotion_input_needed
     const { data, error } = await supabase
-      .schema('boulder-league-dev')
+      .schema(getSupabaseSchema())
       .from('climbers')
       .update({
         ascents_of_next_grade: ascents_of_next_grade,

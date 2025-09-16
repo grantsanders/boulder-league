@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/server'
+import { getSupabaseSchema } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
@@ -6,7 +7,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const user_id = searchParams.get('user_id')
 
-  let query = supabase.schema('boulder-league-dev').from('nickname_candidates').select('*')
+  let query = supabase.schema(getSupabaseSchema()).from('nickname_candidates').select('*')
   if (user_id) query = query.eq('user_id', user_id)
 
   const { data, error } = await query
@@ -26,7 +27,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: false, error: 'Missing required fields' }, { status: 400 })
   }
 
-  const { data, error } = await supabase.schema('boulder-league-dev')
+  const { data, error } = await supabase.schema(getSupabaseSchema())
     .from('nickname_candidates')
     .insert([{ user_id, nickname, submitted_by }])
     .select()

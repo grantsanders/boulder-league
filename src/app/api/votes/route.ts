@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/server'
+import { getSupabaseSchema } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
@@ -6,7 +7,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const voter_id = searchParams.get('voter_id')
 
-  let query = supabase.schema('boulder-league-dev').from('votes').select('*')
+  let query = supabase.schema(getSupabaseSchema()).from('votes').select('*')
   if (voter_id) query = query.eq('voter_id', voter_id)
 
   const { data, error } = await query
@@ -29,7 +30,7 @@ export async function PUT(request: NextRequest) {
 
   // Remove previous votes for this voter/table_type/table_id
   await supabase
-    .schema('boulder-league-dev')
+    .schema(getSupabaseSchema())
     .from('votes')
     .delete()
     .eq('voter_id', voter_id)
@@ -45,7 +46,7 @@ export async function PUT(request: NextRequest) {
   }))
 
   const { data, error } = await supabase
-    .schema('boulder-league-dev')
+    .schema(getSupabaseSchema())
     .from('votes')
     .insert(insertPayload)
 

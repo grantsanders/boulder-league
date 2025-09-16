@@ -358,7 +358,7 @@ export default function DashboardPage() {
               <CardContent className="p-0 text-center flex items-center justify-center h-full">
                 <div>
                   <div className="text-xs md:text-sm font-medium text-muted-foreground mb-1 md:mb-2">Problems Sent</div>
-                  <div className="text-sm md:text-2xl font-bold text-purple-600">{ascentsData.length}n</div>
+                  <div className="text-sm md:text-2xl font-bold text-purple-600">{ascentsData.length}</div>
                 </div>
               </CardContent>
             </Card>

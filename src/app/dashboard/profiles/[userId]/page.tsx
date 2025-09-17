@@ -190,7 +190,7 @@ export default function ProfilePhotoPage() {
                           }`}
                         >
                           <span {...provided.dragHandleProps} className="cursor-grab hover:cursor-grabbing mr-2 flex items-center hover:opacity-80 transition-opacity">
-                            <GripVertical className="w-4 h-4 text-muted-foreground mr-2" />
+                            <GripVertical className="w-5 h-5 text-muted-foreground mr-2" />
                             <button
                               onClick={() => handleImageClick(photo.image_url)}
                               className="hover:opacity-80 transition-opacity"

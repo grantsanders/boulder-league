@@ -204,7 +204,7 @@ export default function NicknameVotePage() {
                           }`}
                         >
                           <span {...provided.dragHandleProps} className="cursor-grab hover:cursor-grabbing">
-                            <GripVertical className="w-4 h-4 text-muted-foreground" />
+                            <GripVertical className="w-5 h-5 text-muted-foreground" />
                           </span>
                           <span className="font-semibold text-foreground">
                             {nickname.nickname}

@@ -93,7 +93,12 @@ export default function ClimbersPage() {
                   {climbers.map((climber) => (
                     <TableRow key={climber.id}>
                       <TableCell className="font-medium">
-                        {climber.first_name} {climber.last_name}
+                        <a
+                          href={`/dashboard/climbers/${climber.id}`}
+                          className="text-primary underline hover:text-primary/80 transition-colors"
+                        >
+                          {climber.first_name} {climber.last_name}
+                        </a>
                       </TableCell>
                       <TableCell>
                         {climber.nickname ? (

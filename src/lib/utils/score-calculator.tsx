@@ -8,7 +8,7 @@ export function calculateScore() {
 
 export function calculatePersonalPoints(climber: Climber, ascent: Ascent) {
     const gradeDifference = ascent.absolute_grade - ascent.working_grade_when_sent
-    if (gradeDifference < -3) { 
+    if (gradeDifference <= -3) { 
         return 0;
     }
     const basePoints = 100

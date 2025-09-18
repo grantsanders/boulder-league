@@ -14,6 +14,7 @@ import { ChevronUp, ChevronDown, Trash2 } from 'lucide-react'
 interface AscentWithId {
   id: string
   uuid: string
+  user_id: string
   name?: string
   description: string
   working_grade_when_sent: number
@@ -219,6 +220,7 @@ export default function LogbookPage() {
                         <TableCell className="font-semibold">
                           {climber ? calculatePersonalPoints(climber, {
                             id: ascent.id,
+                            user_id: ascent.user_id,
                             name: ascent.name || '',
                             description: ascent.description,
                             working_grade_when_sent: ascent.working_grade_when_sent,
@@ -292,6 +294,7 @@ export default function LogbookPage() {
                       <span className="font-semibold text-foreground">
                         {climber ? calculatePersonalPoints(climber, {
                           id: ascent.id,
+                          user_id: ascent.user_id,
                           name: ascent.name || '',
                           description: ascent.description,
                           working_grade_when_sent: ascent.working_grade_when_sent,

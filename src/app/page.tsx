@@ -126,8 +126,7 @@ export default function Home() {
                       ['Working Grade', 100],
                       ['Working Grade - 1', 75],
                       ['Working Grade - 2', 50],
-                      ['Working Grade - 3', 25],
-                      ['Working Grade - 4 or lower', 0],
+                      ['Working Grade - 3 or lower', 0],
                     ].map(([label, score]) => (
                       <TableRow key={label}>
                         <TableCell className="font-medium text-sm md:text-base px-4">{label}</TableCell>
@@ -217,7 +216,7 @@ export default function Home() {
                 <div className="border-t border-border/30 my-2"></div>
                 <p><strong>100 points</strong> for sending your Working Grade.</p>
                 <div className="border-t border-border/30 my-2"></div>
-                <p><strong>+25 / –25</strong> points for each grade above/below (to a min of 0).</p>
+                <p><strong>+25 / –25</strong> points for each grade above/below (to a min of 2 below 0).</p>
                 <div className="border-t border-border/30 my-2"></div>
                 <p><strong>+20% bonus</strong> for flashing.</p>
                 <div className="border-t border-border/30 my-2"></div>

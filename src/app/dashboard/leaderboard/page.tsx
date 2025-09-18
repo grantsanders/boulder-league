@@ -83,8 +83,12 @@ export default function LeaderboardPage() {
     const nextGrade = climber.working_grade + 1
     const userAscentsList = userAscents[climber.id] || []
 
+    const filteredAscents = userAscentsList.filter(ascent => ascent.user_id === climber.id)
+    // console.log('Calculating ascents for climber:', climber.first_name, climber.last_name)
+    // console.log('User ascents:', filteredAscents)
+
     // Count ascents of the next grade from their logbook
-    const ascentsOfNextGrade = userAscentsList.filter(ascent => ascent.absolute_grade === nextGrade).length
+    const ascentsOfNextGrade = filteredAscents.filter(ascent => ascent.absolute_grade === nextGrade).length
 
     // Add the stored ascents_of_next_grade value
     const total = climber.ascents_of_next_grade + ascentsOfNextGrade

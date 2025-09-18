@@ -453,7 +453,10 @@ export default function DashboardPage() {
                           </Badge>
                         </TableCell>
                         <TableCell className="text-muted-foreground">
-                          {new Date(ascent.sent_date).toLocaleDateString()}
+                          {(() => {
+                            const [year, month, day] = ascent.sent_date.split('-');
+                            return `${month}/${day}/${year}`;
+                          })()}
                         </TableCell>
                         <TableCell>
                           {ascent.description && (
@@ -529,7 +532,10 @@ export default function DashboardPage() {
 
                         <div className="flex items-center justify-between">
                           <span className="text-xs text-muted-foreground">
-                            {new Date(ascent.sent_date).toLocaleDateString()} at{' '}
+                            {(() => {
+                              const [year, month, day] = ascent.sent_date.split('-');
+                              return `${month}/${day}/${year}`;
+                            })()} at{' '}
                             <Badge variant="secondary" className="text-xs px-1 py-0">V{ascent.working_grade_when_sent}</Badge>
                           </span>
                           {ascent.description && (

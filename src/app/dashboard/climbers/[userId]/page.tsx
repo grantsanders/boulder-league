@@ -149,7 +149,10 @@ export default function ClimberProfilePage({ params }: ClimberProfilePageProps) 
               {logbook.map((climb) => (
                 <li key={climb.id} className="py-3 flex flex-col sm:flex-row sm:items-center gap-2">
                   <span className="font-medium">{climb.name}</span>
-                  <span className="text-sm text-muted-foreground">{new Date(climb.sent_date).toLocaleDateString()}</span>
+                  <span className="text-sm text-muted-foreground">{(() => {
+                            const [year, month, day] = climb.sent_date.split('-');
+                            return `${month}/${day}/${year}`;
+                          })()}</span>
                   <span className="ml-auto text-sm">Grade: V{climb.absolute_grade}</span>
                   <span className="ml-2 text-sm">Flash: {climb.is_flash ? 'Yes' : 'No'}</span>
                 </li>

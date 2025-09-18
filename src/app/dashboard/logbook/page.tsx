@@ -203,7 +203,10 @@ export default function LogbookPage() {
                     {sortedAscents.map((ascent) => (
                       <TableRow key={ascent.id}>
                         <TableCell className="font-medium">
-                          {new Date(ascent.sent_date).toLocaleDateString()}
+                            {(() => {
+                              const [year, month, day] = ascent.sent_date.split('-');
+                              return `${month}/${day}/${year}`;
+                            })()}
                         </TableCell>
                         <TableCell>{ascent.name || '-'}</TableCell>
                         <TableCell className="max-w-xs">
@@ -288,7 +291,10 @@ export default function LogbookPage() {
                     {/* Third row: Date, working grade, and points */}
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
                       <span>
-                        logged {new Date(ascent.sent_date).toLocaleDateString()} at{' '}
+                        logged {(() => {
+                              const [year, month, day] = ascent.sent_date.split('-');
+                              return `${month}/${day}/${year}`;
+                            })()} at{' '}
                         <Badge variant="secondary" className="text-xs px-1 py-0">V{ascent.working_grade_when_sent}</Badge>
                       </span>
                       <span className="font-semibold text-foreground">

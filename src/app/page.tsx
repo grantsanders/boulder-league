@@ -2,6 +2,8 @@
 'use client'
 
 import { useAuth } from '@/lib/auth-context'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
@@ -10,11 +12,28 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 
 export default function Home() {
   const { user, loading } = useAuth()
+  const router = useRouter()
+
+  // Redirect authenticated users to dashboard
+  useEffect(() => {
+    if (!loading && user) {
+      router.push('/dashboard')
+    }
+  }, [user, loading, router])
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-lg">Loading...</div>
+      </div>
+    )
+  }
+
+  // If user is authenticated, don't render anything (redirect will happen)
+  if (user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-lg">Redirecting to dashboard...</div>
       </div>
     )
   }
@@ -32,25 +51,12 @@ export default function Home() {
             </div>
             
             <div className="flex items-center space-x-2 md:space-x-4">
-              {user ? (
-                <>
-                  <span className="hidden sm:inline text-sm text-muted-foreground">
-                    Logged in as {user.user_metadata?.display_name || user.email}
-                  </span>
-                  <Button asChild size="sm" className="text-xs md:text-sm">
-                    <Link href="/dashboard">Dashboard</Link>
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button asChild variant="ghost" size="sm" className="text-xs md:text-sm">
-                    <Link href="/auth/login">Sign In</Link>
-                  </Button>
-                  <Button asChild size="sm" className="text-xs md:text-sm">
-                    <Link href="/auth/signup">Sign Up</Link>
-                  </Button>
-                </>
-              )}
+              <Button asChild variant="ghost" size="sm" className="text-xs md:text-sm">
+                <Link href="/auth/login">Sign In</Link>
+              </Button>
+              <Button asChild size="sm" className="text-xs md:text-sm">
+                <Link href="/auth/signup">Sign Up</Link>
+              </Button>
               <ThemeToggle />
             </div>
           </div>
@@ -61,11 +67,10 @@ export default function Home() {
         <div className="space-y-6 md:space-y-8">
           <section className="text-center">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-foreground mb-3 md:mb-4">
-              Boulder League Rule Proposal
+              Boulder League Rules
             </h1>
             <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto">
-              Here&apos;s our current working plan for boulder league scoring. <br className="hidden sm:block"/>
-              Please speak now, or forever hold your peace.
+              Official rules for boulder league scoring. <br className="hidden sm:block"/>
             </p>
           </section>
 

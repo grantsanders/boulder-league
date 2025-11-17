@@ -14,10 +14,20 @@ export default function Home() {
   const { user, loading } = useAuth()
   const router = useRouter()
 
-  // Redirect authenticated users to dashboard
+  // Redirect authenticated users to dashboard on first app load only (per tab/session)
   useEffect(() => {
     if (!loading && user) {
-      router.push('/dashboard')
+      try {
+        const hasRedirected = typeof window !== 'undefined' 
+          ? sessionStorage.getItem('initialRedirectDone') 
+          : 'true'
+        if (!hasRedirected) {
+          sessionStorage.setItem('initialRedirectDone', 'true')
+          router.push('/dashboard')
+        }
+      } catch {
+        // If sessionStorage is unavailable, skip redirect to avoid blocking access
+      }
     }
   }, [user, loading, router])
 
@@ -29,14 +39,7 @@ export default function Home() {
     )
   }
 
-  // If user is authenticated, don't render anything (redirect will happen)
-  if (user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-lg">Redirecting to dashboard...</div>
-      </div>
-    )
-  }
+  // If user is authenticated, still render rules page unless first-load redirect triggers
 
   return (
     <div className="min-h-screen bg-background">
